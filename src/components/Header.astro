@@ -7,6 +7,7 @@ import Menu from '@lucide/astro/icons/menu';
 import X from '@lucide/astro/icons/x';
 import Button from './Button.astro';
 import LinkedInLink from './LinkedInLink.astro';
+import Logo from './Logo.astro';
 import { nav, site } from '../data/site';
 
 /** Извън началната страница header-ът винаги е с плътен тъмен фон (няма тъмен hero под него). */
@@ -16,8 +17,11 @@ const solid = Astro.url.pathname.replace(/\/$/, '') !== '';
 <header class:list={['header', 'theme-dark', solid && 'is-solid']} data-header>
 	<div class="header__inner container">
 		<a href="#nachalo" class="brand" aria-label={`${site.brand} – начало`}>
-			<span class="brand__name">{site.brand}</span>
-			<span class="brand__sub">{site.person}</span>
+			<Logo size={40} class="brand__mark" />
+			<span class="brand__text">
+				<span class="brand__name">{site.brand}</span>
+				<span class="brand__sub">{site.person}</span>
+			</span>
 		</a>
 
 		<nav class="nav" aria-label="Основна навигация">
@@ -124,9 +128,23 @@ const solid = Astro.url.pathname.replace(/\/$/, '') !== '';
 
 	.brand {
 		display: flex;
-		flex-direction: column;
+		align-items: center;
+		gap: 0.8rem;
 		line-height: 1.1;
 		flex: none;
+	}
+	.brand__mark {
+		flex: none;
+		color: var(--bronze);
+		transition: color var(--dur-fast) var(--ease-out);
+	}
+	.brand:hover .brand__mark,
+	.brand:focus-visible .brand__mark {
+		color: var(--cream);
+	}
+	.brand__text {
+		display: flex;
+		flex-direction: column;
 	}
 	.brand__name {
 		font-family: var(--font-display);

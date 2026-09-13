@@ -1,0 +1,39 @@
+---
+/**
+ * Монограм „TH“ на HINKOV LAW – векторно възпроизведен от предоставеното лого.
+ * Използва currentColor, за да следва цвета на текста върху тъмен и светъл фон.
+ */
+interface Props {
+	size?: number;
+	class?: string;
+	title?: string;
+	[key: string]: unknown;
+}
+const { size = 40, class: className, title, ...rest } = Astro.props;
+---
+
+<svg
+	class={className}
+	width={size}
+	height={size}
+	viewBox="0 0 560 560"
+	fill="currentColor"
+	role={title ? 'img' : undefined}
+	aria-hidden={title ? undefined : 'true'}
+	focusable="false"
+	{...rest}
+>
+	{title && <title>{title}</title>}
+	<!-- Рамка: пълни горна, лява и долна страна, частична дясна -->
+	<rect x="0" y="0" width="560" height="40" />
+	<rect x="0" y="0" width="40" height="560" />
+	<rect x="0" y="520" width="560" height="40" />
+	<rect x="520" y="0" width="40" height="210" />
+	<!-- T -->
+	<rect x="80" y="80" width="400" height="50" />
+	<rect x="255" y="80" width="50" height="390" />
+	<!-- H -->
+	<rect x="130" y="175" width="50" height="295" />
+	<rect x="375" y="175" width="50" height="295" />
+	<rect x="180" y="300" width="195" height="45" />
+</svg>

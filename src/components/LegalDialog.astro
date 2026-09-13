@@ -7,6 +7,7 @@
  */
 import X from '@lucide/astro/icons/x';
 import ArrowUpRight from '@lucide/astro/icons/arrow-up-right';
+import Logo from './Logo.astro';
 import PrivacyPolicy from './legal/PrivacyPolicy.astro';
 import CookiePolicy from './legal/CookiePolicy.astro';
 import LegalNotice from './legal/LegalNotice.astro';
@@ -24,9 +25,12 @@ const bodies = {
 <dialog class="ldlg theme-light" data-legal-dialog aria-labelledby="ldlg-title">
 	<div class="ldlg__frame">
 		<header class="ldlg__head">
-			<div>
-				<p class="eyebrow">Правна информация</p>
-				<h2 id="ldlg-title" class="ldlg__title" data-legal-title>Документ</h2>
+			<div class="ldlg__head-main">
+				<Logo size={36} class="ldlg__mark" />
+				<div>
+					<p class="eyebrow">Правна информация</p>
+					<h2 id="ldlg-title" class="ldlg__title" data-legal-title>Документ</h2>
+				</div>
 			</div>
 			<button type="button" class="ldlg__close" data-legal-close aria-label="Затвори прозореца">
 				<X size={22} aria-hidden="true" />
@@ -133,6 +137,16 @@ const bodies = {
 		align-items: flex-start;
 		gap: 1.5rem;
 		padding: var(--ldlg-pad) var(--ldlg-pad) 1rem;
+	}
+	.ldlg__head-main {
+		display: flex;
+		gap: 1rem;
+		align-items: flex-start;
+	}
+	.ldlg__mark {
+		flex: none;
+		color: var(--bronze-deep);
+		margin-top: 0.15rem;
 	}
 	.ldlg__title {
 		font-size: clamp(1.5rem, 1.6vw + 0.9rem, 2.1rem);

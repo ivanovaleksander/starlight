@@ -1,5 +1,6 @@
 ---
 import LinkedInLink from './LinkedInLink.astro';
+import Logo from './Logo.astro';
 import { site, nav, legalLinks, PLACEHOLDER } from '../data/site';
 
 const year = new Date().getFullYear();
@@ -11,6 +12,7 @@ const show = (v: string | null) => v && v !== PLACEHOLDER;
 	<div class="container">
 		<div class="footer__top">
 			<div class="footer__brand">
+				<Logo size={48} class="footer__mark" />
 				<p id="footer-title" class="footer__name">{site.brand}</p>
 				<p class="footer__person">{site.person}</p>
 				<p class="footer__tag muted">{site.tagline}</p>
@@ -113,6 +115,10 @@ const show = (v: string | null) => v && v !== PLACEHOLDER;
 		display: grid;
 		gap: 0.5rem;
 		align-content: start;
+	}
+	.footer__mark {
+		color: var(--bronze);
+		margin-bottom: 0.75rem;
 	}
 	.footer__name {
 		font-family: var(--font-display);

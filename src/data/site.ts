@@ -173,6 +173,7 @@ export const legalLinks = [
 	{ label: 'Политика за поверителност', href: '/politika-za-poveritelnost' },
 	{ label: 'Политика за бисквитки', href: '/politika-za-biskvitki' },
 	{ label: 'Правна информация', href: '/pravna-informacia' },
+	{ label: 'Декларация за достъпност', href: '/deklaracia-za-dostapnost' },
 ];
 
 export const contactTopics = [

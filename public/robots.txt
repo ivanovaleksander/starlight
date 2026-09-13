@@ -3,6 +3,7 @@ Allow: /
 Disallow: /politika-za-poveritelnost
 Disallow: /politika-za-biskvitki
 Disallow: /pravna-informacia
+Disallow: /deklaracia-za-dostapnost
 
 # Sitemap: заменете с реалния домейн след публикуване
 Sitemap: /sitemap-index.xml

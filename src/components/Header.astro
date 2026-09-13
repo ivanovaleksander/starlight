@@ -8,9 +8,12 @@ import X from '@lucide/astro/icons/x';
 import Button from './Button.astro';
 import LinkedInLink from './LinkedInLink.astro';
 import { nav, site } from '../data/site';
+
+/** Извън началната страница header-ът винаги е с плътен тъмен фон (няма тъмен hero под него). */
+const solid = Astro.url.pathname.replace(/\/$/, '') !== '';
 ---
 
-<header class="header theme-dark" data-header>
+<header class:list={['header', 'theme-dark', solid && 'is-solid']} data-header>
 	<div class="header__inner container">
 		<a href="#nachalo" class="brand" aria-label={`${site.brand} – начало`}>
 			<span class="brand__name">{site.brand}</span>
@@ -94,11 +97,13 @@ import { nav, site } from '../data/site';
 		opacity: 0;
 		transition: opacity var(--dur) var(--ease-out);
 	}
+	.header.is-solid,
 	.header.is-scrolled {
 		background: rgba(12, 22, 38, 0.82);
 		-webkit-backdrop-filter: blur(14px) saturate(140%);
 		backdrop-filter: blur(14px) saturate(140%);
 	}
+	.header.is-solid::after,
 	.header.is-scrolled::after {
 		opacity: 1;
 	}

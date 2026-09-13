@@ -4,6 +4,7 @@
  * (Резервирането на консултация има собствен скрипт: src/scripts/booking.ts)
  */
 import { initI18n, t } from './i18n';
+import { initBooking } from './booking';
 
 initI18n();
 
@@ -162,6 +163,7 @@ initMobileMenu();
 initReveal();
 initActiveNav();
 initTopicPreselect();
+initBooking();
 
 /* ---------- Правни документи в модален прозорец ---------- */
 function initLegalDialog() {

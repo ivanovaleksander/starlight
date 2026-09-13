@@ -29,6 +29,7 @@ const image = match?.[1].default;
 		<Picture
 			src={image}
 			formats={['avif', 'webp']}
+			fallbackFormat="jpg"
 			widths={[480, 800, 1200, 1600]}
 			sizes={sizes}
 			alt="Адвокат Тодор Хинков"

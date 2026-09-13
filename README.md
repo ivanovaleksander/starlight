@@ -38,7 +38,7 @@ scripts/generate-og.mjs     # генерира OG изображението ч�
 | Елемент | Къде | Статус |
 | --- | --- | --- |
 | Портрет на адвокат Хинков | `public/images/portrait-placeholder.svg` → заменете и обновете `src` в `Hero.astro` и `About.astro` | placeholder |
-| Биография, образование, опит | `src/components/About.astro` (масивът `facts`) | placeholder |
+| Биография, образование, опит | `src/components/About.astro` (масивът `facts`) | попълнени |
 | Адрес, телефон, имейл, работно време | `src/data/site.ts` → `site.contact` | placeholder |
 | Карта | `site.contact.mapEmbedUrl` – показва се само ако е зададен | изключена |
 | Публикации | `src/data/site.ts` → `publications` | **демо съдържание** |

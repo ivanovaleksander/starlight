@@ -60,6 +60,10 @@ const jsonLd = {
 		name: site.fullName,
 		jobTitle: 'Адвокат',
 		memberOf: { '@type': 'Organization', name: site.barAssociation },
+		alumniOf: {
+			'@type': 'CollegeOrUniversity',
+			name: 'Пловдивски университет „Паисий Хилендарски“',
+		},
 		identifier: {
 			'@type': 'PropertyValue',
 			name: 'Личен номер в Единния адвокатски регистър',

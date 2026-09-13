@@ -59,7 +59,7 @@ const current = Astro.url.pathname.replace(/\/$/, '');
 					</p>
 				</div>
 
-				<div class="legal__body">
+				<div class="legal__body prose">
 					<slot />
 				</div>
 
@@ -147,83 +147,6 @@ const current = Astro.url.pathname.replace(/\/$/, '');
 		color: var(--fg-muted);
 	}
 
-	.legal__body {
-		counter-reset: section;
-	}
-	.legal__body :global(h2) {
-		font-size: var(--text-h3);
-		margin: 2.5rem 0 0.85rem;
-		padding-top: 1.5rem;
-		border-top: 1px solid var(--line);
-	}
-	.legal__body :global(h3) {
-		font-family: var(--font-sans);
-		font-size: var(--text-md);
-		font-weight: 600;
-		margin: 1.5rem 0 0.5rem;
-	}
-	.legal__body :global(p),
-	.legal__body :global(li),
-	.legal__body :global(td),
-	.legal__body :global(th) {
-		color: var(--fg-muted);
-		font-size: var(--text-base);
-		line-height: 1.65;
-	}
-	.legal__body :global(p + p) {
-		margin-top: 0.85em;
-	}
-	.legal__body :global(ul),
-	.legal__body :global(ol) {
-		display: grid;
-		gap: 0.45rem;
-		margin: 0.75rem 0;
-		padding-left: 1.35rem;
-	}
-	.legal__body :global(ul) {
-		list-style: disc;
-	}
-	.legal__body :global(ol) {
-		list-style: decimal;
-	}
-	.legal__body :global(strong) {
-		color: var(--ink);
-		font-weight: 600;
-	}
-	.legal__body :global(a) {
-		color: var(--bronze-deep);
-		text-decoration: underline;
-		text-underline-offset: 0.15em;
-	}
-	.legal__body :global(.table-wrap) {
-		overflow-x: auto;
-		margin: 1rem 0;
-	}
-	.legal__body :global(table) {
-		width: 100%;
-		border-collapse: collapse;
-		font-size: var(--text-sm);
-	}
-	.legal__body :global(th),
-	.legal__body :global(td) {
-		text-align: left;
-		vertical-align: top;
-		padding: 0.65rem 0.75rem;
-		border-bottom: 1px solid var(--line);
-		font-size: var(--text-sm);
-	}
-	.legal__body :global(th) {
-		color: var(--ink);
-		font-weight: 600;
-		background: var(--paper-2);
-	}
-	.legal__body :global(.callout) {
-		margin: 1rem 0;
-		padding: 0.9rem 1.1rem;
-		border-left: 2px solid var(--bronze-2);
-		background: var(--paper-2);
-		font-size: var(--text-sm);
-	}
 
 	.legal__cta {
 		display: inline-flex;

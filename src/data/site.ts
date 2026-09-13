@@ -169,12 +169,61 @@ export const publications = [
 	},
 ];
 
-export const legalLinks = [
-	{ label: 'Политика за поверителност', href: '/politika-za-poveritelnost' },
-	{ label: 'Политика за бисквитки', href: '/politika-za-biskvitki' },
-	{ label: 'Правна информация', href: '/pravna-informacia' },
-	{ label: 'Декларация за достъпност', href: '/deklaracia-za-dostapnost' },
-];
+export type LegalDoc = {
+	key: 'privacy' | 'cookies' | 'legal' | 'accessibility';
+	title: string;
+	href: string;
+	description: string;
+	/** Правна рамка – показва се под заглавието. */
+	basis: string;
+};
+
+/**
+ * Правни документи. Всеки има самостоятелна страница (href) и се показва
+ * и в модалния прозорец на началната страница (LegalDialog.astro).
+ */
+export const legalDocs: Record<LegalDoc['key'], LegalDoc> = {
+	privacy: {
+		key: 'privacy',
+		title: 'Политика за поверителност',
+		href: '/politika-za-poveritelnost',
+		description:
+			'Как HINKOV LAW – Адвокат Тодор Хинков обработва лични данни съгласно Регламент (ЕС) 2016/679 (GDPR) и Закона за защита на личните данни.',
+		basis:
+			'Регламент (ЕС) 2016/679 (Общ регламент относно защитата на данните – GDPR) и Закон за защита на личните данни (ЗЗЛД).',
+	},
+	cookies: {
+		key: 'cookies',
+		title: 'Политика за бисквитки',
+		href: '/politika-za-biskvitki',
+		description:
+			'Каква информация се съхранява на вашето устройство при посещение на уебсайта на HINKOV LAW и как можете да я управлявате.',
+		basis:
+			'Чл. 4а от Закона за електронните съобщения (ЗЕС), Директива 2002/58/ЕО (ePrivacy) и Регламент (ЕС) 2016/679 (GDPR).',
+	},
+	legal: {
+		key: 'legal',
+		title: 'Правна информация',
+		href: '/pravna-informacia',
+		description:
+			'Идентификация на доставчика, професионални правила и условия за ползване на уебсайта на HINKOV LAW – Адвокат Тодор Хинков.',
+		basis:
+			'Чл. 4 от Закона за електронната търговия (ЗЕТ), Закон за адвокатурата (ЗАдв) и Етичен кодекс на адвоката.',
+	},
+	accessibility: {
+		key: 'accessibility',
+		title: 'Декларация за достъпност',
+		href: '/deklaracia-za-dostapnost',
+		description:
+			'Ангажимент на HINKOV LAW – Адвокат Тодор Хинков за достъпност на уебсайта съгласно насоките WCAG 2.2, ниво AA.',
+		basis:
+			'Доброволна декларация, изготвена по образеца на Директива (ЕС) 2016/2102 и насоките WCAG 2.2 (Web Content Accessibility Guidelines).',
+	},
+};
+
+export const legalList: LegalDoc[] = Object.values(legalDocs);
+
+export const legalLinks = legalList.map((d) => ({ label: d.title, href: d.href, key: d.key }));
 
 export const contactTopics = [
 	...services.map((s) => s.title),

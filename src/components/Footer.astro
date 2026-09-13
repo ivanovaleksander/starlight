@@ -73,7 +73,7 @@ const show = (v: string | null) => v && v !== PLACEHOLDER;
 					{
 						legalLinks.map((l) => (
 							<li>
-								<a href={l.href} class="u-link footer__link">
+								<a href={l.href} class="u-link footer__link" data-legal-open={l.key}>
 									{l.label}
 								</a>
 							</li>

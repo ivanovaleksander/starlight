@@ -151,3 +151,67 @@ initReveal();
 initActiveNav();
 initTopicPreselect();
 initContactForm();
+
+/* ---------- Правни документи в модален прозорец ---------- */
+function initLegalDialog() {
+	const dialog = document.querySelector<HTMLDialogElement>('[data-legal-dialog]');
+	if (!dialog || typeof dialog.showModal !== 'function') return;
+
+	const title = dialog.querySelector<HTMLElement>('[data-legal-title]');
+	const scroll = dialog.querySelector<HTMLElement>('[data-legal-scroll]');
+	const pageLink = dialog.querySelector<HTMLAnchorElement>('[data-legal-page-link]');
+	const tabs = Array.from(dialog.querySelectorAll<HTMLButtonElement>('[data-legal-tab]'));
+	const docs = Array.from(dialog.querySelectorAll<HTMLElement>('[data-legal-doc]'));
+	const openers = Array.from(document.querySelectorAll<HTMLAnchorElement>('[data-legal-open]'));
+	const hrefByKey = new Map(openers.map((a) => [a.dataset.legalOpen!, a.getAttribute('href') ?? '/']));
+	const keyByHref = new Map(Array.from(hrefByKey, ([k, h]) => [h, k]));
+	let lastOpener: HTMLElement | null = null;
+
+	const show = (key: string) => {
+		for (const doc of docs) doc.hidden = doc.dataset.legalDoc !== key;
+		for (const tab of tabs) tab.setAttribute('aria-pressed', String(tab.dataset.legalTab === key));
+		const active = tabs.find((t) => t.dataset.legalTab === key);
+		if (title && active) title.textContent = active.textContent?.trim() ?? '';
+		if (pageLink) pageLink.href = hrefByKey.get(key) ?? '/';
+		if (scroll) scroll.scrollTop = 0;
+	};
+
+	const open = (key: string, opener?: HTMLElement) => {
+		lastOpener = opener ?? null;
+		show(key);
+		if (!dialog.open) dialog.showModal();
+		document.body.classList.add('is-locked');
+		scroll?.focus({ preventScroll: true });
+	};
+
+	const close = () => dialog.close();
+
+	for (const a of openers) {
+		a.addEventListener('click', (e) => {
+			// Ctrl/Cmd+клик или среден бутон – отваря самостоятелната страница
+			if (e.metaKey || e.ctrlKey || e.shiftKey || e.button === 1) return;
+			e.preventDefault();
+			open(a.dataset.legalOpen!, a);
+		});
+	}
+	for (const tab of tabs) tab.addEventListener('click', () => show(tab.dataset.legalTab!));
+	dialog.querySelectorAll('[data-legal-close]').forEach((b) => b.addEventListener('click', close));
+
+	// Връзки между документите вътре в прозореца превключват документа
+	dialog.addEventListener('click', (e) => {
+		const a = (e.target as HTMLElement).closest<HTMLAnchorElement>('a[href]');
+		if (a && keyByHref.has(a.getAttribute('href') ?? '')) {
+			e.preventDefault();
+			show(keyByHref.get(a.getAttribute('href')!)!);
+			return;
+		}
+		// Клик върху фона затваря
+		if (e.target === dialog) close();
+	});
+	dialog.addEventListener('close', () => {
+		document.body.classList.remove('is-locked');
+		lastOpener?.focus();
+	});
+}
+
+initLegalDialog();

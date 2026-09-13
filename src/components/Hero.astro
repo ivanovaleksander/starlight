@@ -5,6 +5,7 @@
  * през абстрактна геометрична мрежа) + бавно движещ се градиент.
  */
 import Button from './Button.astro';
+import Portrait from './Portrait.astro';
 import { site, services } from '../data/site';
 ---
 
@@ -69,20 +70,8 @@ import { site, services } from '../data/site';
 
 		<figure class="hero__portrait" data-reveal style="--reveal-delay:2">
 			<div class="hero__portrait-frame">
-				<!--
-					TODO: заменете placeholder изображението с реален професионален
-					портрет на адвокат Тодор Хинков (препоръчително 4:5, ≥ 1200px).
-					Не използвайте чужди снимки или генерирани лица.
-				-->
-				<img
-					src="/images/portrait-placeholder.svg"
-					alt="Място за професионален портрет на адвокат Тодор Хинков"
-					width="800"
-					height="1000"
-					loading="eager"
-					fetchpriority="high"
-					decoding="async"
-				/>
+				<!-- Реалната снимка: src/assets/portrait/hero.jpg (виж README там) -->
+				<Portrait variant="hero" loading="eager" sizes="(min-width: 56rem) 24rem, 80vw" />
 			</div>
 			<figcaption class="hero__caption">
 				<span>{site.person}</span>
@@ -246,10 +235,11 @@ import { site, services } from '../data/site';
 		border-radius: var(--radius-lg);
 		z-index: -1;
 	}
-	.hero__portrait-frame img {
+	.hero__portrait-frame :global(img) {
 		width: 100%;
 		height: 100%;
 		object-fit: cover;
+		object-position: center top;
 	}
 	.hero__portrait {
 		animation: float-slow 9s var(--ease-in-out) infinite;

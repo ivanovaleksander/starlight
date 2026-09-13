@@ -4,6 +4,7 @@
  * за все още непредоставена информация. Не съдържа измислена биография.
  */
 import LinkedInLink from './LinkedInLink.astro';
+import Portrait from './Portrait.astro';
 import { site, PLACEHOLDER } from '../data/site';
 
 const facts = [
@@ -18,15 +19,8 @@ const facts = [
 	<div class="container about__grid">
 		<div class="about__aside" data-reveal>
 			<div class="about__portrait">
-				<!-- TODO: заменете с реален портрет (виж бележката в Hero.astro) -->
-				<img
-					src="/images/portrait-placeholder.svg"
-					alt="Място за портрет на адвокат Тодор Хинков"
-					width="800"
-					height="1000"
-					loading="lazy"
-					decoding="async"
-				/>
+				<!-- Реалната снимка: src/assets/portrait/about.jpg (виж README там) -->
+				<Portrait variant="about" sizes="(min-width: 56rem) 22rem, 90vw" />
 			</div>
 			<div class="about__aside-meta">
 				<p class="about__name">{site.person}</p>
@@ -89,10 +83,11 @@ const facts = [
 		background: var(--navy-800);
 		border: 1px solid var(--line);
 	}
-	.about__portrait img {
+	.about__portrait :global(img) {
 		width: 100%;
 		height: 100%;
 		object-fit: cover;
+		object-position: center top;
 	}
 	.about__aside-meta {
 		display: grid;

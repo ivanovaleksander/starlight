@@ -17,7 +17,7 @@ const { variant, class: className, loading = 'lazy', sizes = '(min-width: 56rem)
 	Astro.props;
 
 const files = import.meta.glob<{ default: ImageMetadata }>(
-	'../assets/portrait/*.{jpg,jpeg,png,webp}',
+	'../assets/portrait/{hero,about}.{jpg,jpeg,png,webp}',
 	{ eager: true },
 );
 const match = Object.entries(files).find(([path]) => new RegExp(`/${variant}\\.(jpe?g|png|webp)$`).test(path));

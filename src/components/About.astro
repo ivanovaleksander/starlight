@@ -11,7 +11,7 @@ const facts = [
 	{ label: 'Биографична информация', value: null },
 	{ label: 'Образование', value: null },
 	{ label: 'Професионален опит', value: null },
-	{ label: 'Членство', value: 'Адвокатска колегия – Пловдив' },
+	{ label: 'Членство', value: `${site.barAssociation}, вписан от ${site.memberSince} г. Личен номер ${site.registryNumber}.` },
 ];
 ---
 
@@ -24,7 +24,7 @@ const facts = [
 			</div>
 			<div class="about__aside-meta">
 				<p class="about__name">{site.person}</p>
-				<p class="muted">Адвокатска колегия – Пловдив</p>
+				<p class="muted">{site.barAssociation}</p>
 				<LinkedInLink variant="button" size={18} class="about__li" />
 			</div>
 		</div>

@@ -35,8 +35,16 @@ const show = (v: string | null) => v && v !== PLACEHOLDER;
 			<div class="footer__col">
 				<p class="footer__heading">Контакти</p>
 				<ul class="footer__contacts">
-					<li>{site.city}, {site.country}</li>
-					<li>{show(c.address) ? c.address : <span class="placeholder">Адрес – {PLACEHOLDER.toLowerCase()}</span>}</li>
+					{
+						show(c.address) ? (
+							c.addressLines.map((line) => <li>{line}</li>)
+						) : (
+							<>
+								<li>{site.city}, {site.country}</li>
+								<li><span class="placeholder">Адрес – {PLACEHOLDER.toLowerCase()}</span></li>
+							</>
+						)
+					}
 					<li>
 						{
 							show(c.phone) ? (

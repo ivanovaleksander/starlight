@@ -13,6 +13,12 @@ export const site = {
 	brand: 'HINKOV LAW',
 	person: 'Адвокат Тодор Хинков',
 	personShort: 'Тодор Хинков',
+	/** Данни от Единния адвокатски регистър (Висш адвокатски съвет). */
+	fullName: 'Тодор Красимиров Хинков',
+	barAssociation: 'Адвокатска колегия – Пловдив',
+	registryNumber: '1000137640',
+	/** Първо вписване в регистъра на колегията: 01.07.2013 г. */
+	memberSince: '2013',
 	city: 'Пловдив',
 	country: 'България',
 	tagline: 'Правна защита с ясна стратегия и последователни действия.',
@@ -26,13 +32,19 @@ export const site = {
 		ogImage: '/og.png',
 		locale: 'bg_BG',
 	},
-	/** Контактни данни – попълнете при предоставяне. */
+	/** Контактни данни (по Единния адвокатски регистър). */
 	contact: {
-		address: PLACEHOLDER as string | null,
-		phone: PLACEHOLDER as string | null,
-		email: PLACEHOLDER as string | null,
+		address: 'ул. „Кресна“ № 5, ет. 1, 4000 Пловдив' as string | null,
+		addressLines: ['ул. „Кресна“ № 5, ет. 1', '4000 Пловдив, България'],
+		phone: '+359 896 306 246' as string | null,
+		email: 'todor_hinkov@abv.bg' as string | null,
 		hours: PLACEHOLDER as string | null,
-		/** Картата се показва само ако е предоставен точен адрес и embed URL. */
+		/**
+		 * Връзка към картата (отваря се в нов прозорец). Не се вгражда iframe,
+		 * за да не се зареждат бисквитки на трети страни без съгласие.
+		 */
+		mapUrl: 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent('ул. Кресна 5, 4000 Пловдив, България'),
+		/** Ако бъде решено да се вгради карта, задайте embed URL и обновете Политиката за бисквитки. */
 		mapEmbedUrl: null as string | null,
 	},
 } as const;

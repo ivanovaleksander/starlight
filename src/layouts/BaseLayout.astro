@@ -33,7 +33,7 @@ const ogImage = new URL(site.seo.ogImage, Astro.site);
 /**
  * Структурирани данни – САМО потвърдена информация:
  * име, адвокат, град, LinkedIn, области на практика.
- * Адрес, телефон, имейл и работно време се добавят, когато бъдат предоставени.
+ * Адрес, телефон и личен номер са по Единния адвокатски регистър.
  */
 const jsonLd = {
 	'@context': 'https://schema.org',
@@ -45,15 +45,25 @@ const jsonLd = {
 	description: site.seo.description,
 	address: {
 		'@type': 'PostalAddress',
+		streetAddress: 'ул. „Кресна“ № 5, ет. 1',
+		postalCode: '4000',
 		addressLocality: site.city,
 		addressCountry: 'BG',
 	},
+	telephone: site.contact.phone,
+	email: site.contact.email,
 	areaServed: { '@type': 'City', name: site.city },
 	knowsAbout: services.map((s) => s.title),
 	founder: {
 		'@type': 'Person',
-		name: site.personShort,
+		name: site.fullName,
 		jobTitle: 'Адвокат',
+		memberOf: { '@type': 'Organization', name: site.barAssociation },
+		identifier: {
+			'@type': 'PropertyValue',
+			name: 'Личен номер в Единния адвокатски регистър',
+			value: site.registryNumber,
+		},
 		sameAs: [site.linkedin],
 	},
 	sameAs: [site.linkedin],

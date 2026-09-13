@@ -55,8 +55,7 @@ export const nav: NavItem[] = [
 	{ label: 'Начало', href: '#nachalo', id: 'nachalo' },
 	{ label: 'За мен', href: '#za-men', id: 'za-men' },
 	{ label: 'Правни услуги', href: '#uslugi', id: 'uslugi' },
-	{ label: 'За граждани', href: '#za-grazhdani', id: 'za-grazhdani' },
-	{ label: 'За бизнеса', href: '#za-biznesa', id: 'za-biznesa' },
+	{ label: 'Кого представлявам', href: '#kogo-predstavlyavam', id: 'kogo-predstavlyavam' },
 	{ label: 'Публикации', href: '#publikacii', id: 'publikacii' },
 	{ label: 'Контакти', href: '#kontakti', id: 'kontakti' },
 ];

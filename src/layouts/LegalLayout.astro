@@ -1,0 +1,90 @@
+---
+/** Layout за правните подстраници (политики). Съдържанието е временно. */
+import BaseLayout from './BaseLayout.astro';
+import ArrowRight from '@lucide/astro/icons/arrow-right';
+import { site } from '../data/site';
+
+interface Props {
+	title: string;
+	description: string;
+}
+const { title, description } = Astro.props;
+---
+
+<BaseLayout title={`${title} | ${site.brand}`} description={description} noindex>
+	<article class="legal theme-light">
+		<div class="container legal__inner">
+			<a href="/" class="legal__back u-link">← Обратно към началото</a>
+			<p class="eyebrow">Правна информация</p>
+			<h1 class="legal__title">{title}</h1>
+			<div class="legal__notice" role="note">
+				<p>
+					<strong>Временно съдържание.</strong> Този документ трябва да бъде изготвен и потвърден
+					от адвокат Хинков преди публикуване на сайта. Текстът по-долу очертава единствено
+					препоръчителната структура.
+				</p>
+			</div>
+			<div class="legal__body">
+				<slot />
+			</div>
+			<a href="/#kontakti" class="legal__cta">
+				Въпроси относно този документ <ArrowRight size={16} aria-hidden="true" />
+			</a>
+		</div>
+	</article>
+</BaseLayout>
+
+<style>
+	.legal {
+		padding-top: calc(var(--header-h) + clamp(3rem, 6vw, 5rem));
+		padding-bottom: var(--section-y);
+		background: var(--paper);
+		color: var(--ink);
+	}
+	.legal__inner {
+		max-width: 46rem;
+	}
+	.legal__back {
+		display: inline-block;
+		margin-bottom: 2.5rem;
+		font-size: var(--text-sm);
+		color: var(--fg-muted);
+	}
+	.legal__title {
+		font-size: var(--text-h2);
+		margin: 1rem 0 2rem;
+	}
+	.legal__notice {
+		padding: 1rem 1.25rem;
+		border: 1px dashed var(--line-strong);
+		border-radius: var(--radius);
+		background: var(--paper-2);
+		font-size: var(--text-sm);
+		color: var(--fg-muted);
+		margin-bottom: 2.5rem;
+	}
+	.legal__body :global(h2) {
+		font-size: var(--text-h3);
+		margin: 2.25rem 0 0.75rem;
+	}
+	.legal__body :global(p),
+	.legal__body :global(li) {
+		color: var(--fg-muted);
+	}
+	.legal__body :global(ul) {
+		list-style: disc;
+		padding-left: 1.25rem;
+		display: grid;
+		gap: 0.4rem;
+		margin-top: 0.5rem;
+	}
+	.legal__cta {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		margin-top: 3rem;
+		font-weight: 600;
+		font-size: var(--text-sm);
+		color: var(--bronze-deep);
+	}
+</style>

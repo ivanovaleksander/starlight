@@ -1,0 +1,189 @@
+---
+/** Начин на работа – четири етапа, свързани с анимирана линия. */
+import { processSteps } from '../data/site';
+---
+
+<section class="section theme-dark process" aria-labelledby="process-title">
+	<div class="container">
+		<header class="process__head">
+			<div>
+				<p class="eyebrow" data-reveal>Начин на работа</p>
+				<h2 id="process-title" data-reveal style="--reveal-delay:1">
+					Ясен процес. Последователни стъпки.
+				</h2>
+			</div>
+			<p class="lead" data-reveal style="--reveal-delay:2">
+				Всеки казус преминава през едни и същи ясни етапи – така знаете какво следва и защо.
+			</p>
+		</header>
+
+		<ol class="steps" data-reveal data-steps>
+			<span class="steps__track" aria-hidden="true"><span class="steps__progress"></span></span>
+			{
+				processSteps.map((step, i) => (
+					<li class="step" style={`--i:${i}`}>
+						<span class="step__node" aria-hidden="true">
+							<span class="step__dot" />
+						</span>
+						<span class="step__num" aria-hidden="true">
+							0{i + 1}
+						</span>
+						<h3 class="step__title">{step.title}</h3>
+						<p class="step__text">{step.text}</p>
+					</li>
+				))
+			}
+		</ol>
+	</div>
+</section>
+
+<style>
+	.process {
+		background: var(--navy-950);
+	}
+	.process__head {
+		display: grid;
+		gap: 1.5rem;
+		margin-bottom: clamp(3rem, 6vw, 5rem);
+	}
+	.process__head h2 {
+		margin-top: 1rem;
+		max-width: 14ch;
+	}
+
+	.steps {
+		position: relative;
+		display: grid;
+		gap: 2.5rem;
+		padding-left: 2.25rem;
+	}
+	.steps__track {
+		position: absolute;
+		left: 0.5rem;
+		top: 0.5rem;
+		bottom: 0.5rem;
+		width: 1px;
+		background: var(--line);
+		overflow: hidden;
+	}
+	.steps__progress {
+		position: absolute;
+		inset: 0;
+		background: linear-gradient(to bottom, var(--bronze), var(--bronze-2));
+		transform: scaleY(0);
+		transform-origin: top;
+		transition: transform 1.6s var(--ease-out) 0.2s;
+	}
+	.steps.is-visible .steps__progress {
+		transform: scaleY(1);
+	}
+
+	.step {
+		position: relative;
+		display: grid;
+		gap: 0.6rem;
+		opacity: 0;
+		transform: translateY(16px);
+		transition:
+			opacity var(--dur-slow) var(--ease-out),
+			transform var(--dur-slow) var(--ease-out);
+		transition-delay: calc(var(--i) * 260ms + 200ms);
+	}
+	.steps.is-visible .step {
+		opacity: 1;
+		transform: none;
+	}
+	.step__node {
+		position: absolute;
+		left: -2.25rem;
+		top: 0.15rem;
+		width: 1.05rem;
+		height: 1.05rem;
+		border: 1px solid var(--line-strong);
+		border-radius: 50%;
+		background: var(--navy-950);
+		display: grid;
+		place-items: center;
+	}
+	.step__dot {
+		width: 0.4rem;
+		height: 0.4rem;
+		border-radius: 50%;
+		background: var(--bronze);
+		transform: scale(0);
+		transition: transform var(--dur) var(--ease-out);
+		transition-delay: calc(var(--i) * 260ms + 500ms);
+	}
+	.steps.is-visible .step__dot {
+		transform: scale(1);
+	}
+	.step__num {
+		font-size: var(--text-xs);
+		font-weight: 600;
+		letter-spacing: 0.14em;
+		color: var(--bronze);
+	}
+	.step__title {
+		font-size: clamp(1.3rem, 1.2vw + 0.8rem, 1.6rem);
+	}
+	.step__text {
+		color: var(--fg-muted);
+		font-size: var(--text-sm);
+		line-height: 1.65;
+		max-width: 30rem;
+	}
+
+	@media (min-width: 56rem) {
+		.process__head {
+			grid-template-columns: 1fr 1fr;
+			align-items: end;
+		}
+		.steps {
+			grid-template-columns: repeat(4, minmax(0, 1fr));
+			gap: 2.5rem;
+			padding-left: 0;
+			padding-top: 2.75rem;
+		}
+		.steps__track {
+			left: 0.5rem;
+			right: 0.5rem;
+			top: 0.5rem;
+			bottom: auto;
+			width: auto;
+			height: 1px;
+		}
+		.steps__progress {
+			transform: scaleX(0);
+			transform-origin: left;
+		}
+		.steps.is-visible .steps__progress {
+			transform: scaleX(1);
+		}
+		.step__node {
+			left: 0;
+			top: -2.75rem;
+		}
+		.step:hover .step__title {
+			color: var(--bronze);
+		}
+		.step__title {
+			transition: color var(--dur) var(--ease-out);
+		}
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.step,
+		.step__dot,
+		.steps__progress {
+			transition: none;
+			opacity: 1;
+			transform: none;
+		}
+	}
+	/* Без JavaScript – всичко е видимо */
+	html:not(.js) .step,
+	html:not(.js) .step__dot,
+	html:not(.js) .steps__progress {
+		opacity: 1;
+		transform: none;
+	}
+</style>

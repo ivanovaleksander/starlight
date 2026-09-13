@@ -1,0 +1,156 @@
+---
+/** Две визуално разграничени направления: За граждани (светло) и За бизнеса (тъмно). */
+import Check from '@lucide/astro/icons/check';
+import Button from './Button.astro';
+import { audiences } from '../data/site';
+
+const cards = [
+	{ ...audiences.citizens, theme: 'card--light' },
+	{ ...audiences.business, theme: 'card--dark' },
+];
+---
+
+<section class="section theme-light audiences" aria-label="За граждани и за бизнеса">
+	<div class="container">
+		<header class="audiences__head">
+			<p class="eyebrow" data-reveal>Кого представлявам</p>
+			<h2 data-reveal style="--reveal-delay:1">Правна подкрепа за граждани и бизнес.</h2>
+		</header>
+
+		<div class="audiences__grid">
+			{
+				cards.map((c, i) => (
+					<article
+						id={c.id}
+						class:list={['card', c.theme, i === 1 && 'theme-dark']}
+						aria-labelledby={`${c.id}-title`}
+						data-reveal
+						style={`--reveal-delay:${i + 1}`}
+					>
+						<div class="card__glow" aria-hidden="true" />
+						<p class="eyebrow">{c.eyebrow}</p>
+						<h3 id={`${c.id}-title`} class="card__title">
+							{c.title}
+						</h3>
+						<p class="card__text">{c.text}</p>
+						<ul class="card__points">
+							{c.points.map((p) => (
+								<li>
+									<Check size={16} stroke-width={2.2} aria-hidden="true" />
+									<span>{p}</span>
+								</li>
+							))}
+						</ul>
+						<div class="card__cta">
+							<Button href="#kontakti" variant="link">
+								Запитване {c.eyebrow.toLowerCase()}
+							</Button>
+						</div>
+					</article>
+				))
+			}
+		</div>
+	</div>
+</section>
+
+<style>
+	.audiences {
+		background: var(--paper-2);
+	}
+	.audiences__head {
+		display: grid;
+		gap: 1rem;
+		margin-bottom: clamp(2.5rem, 5vw, 4rem);
+	}
+	.audiences__head h2 {
+		max-width: 18ch;
+	}
+	.audiences__grid {
+		display: grid;
+		gap: 1.5rem;
+	}
+
+	.card {
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		gap: 1.25rem;
+		padding: clamp(1.75rem, 4vw, 3rem);
+		border-radius: var(--radius-lg);
+		overflow: hidden;
+		isolation: isolate;
+		transition:
+			transform var(--dur) var(--ease-out),
+			box-shadow var(--dur) var(--ease-out);
+	}
+	.card:hover {
+		transform: translateY(-4px);
+		box-shadow: 0 30px 60px -30px rgba(12, 22, 38, 0.45);
+	}
+	.card--light {
+		background: #fff;
+		border: 1px solid var(--line);
+	}
+	.card--dark {
+		background: var(--navy-900);
+		color: var(--cream);
+	}
+	.card__glow {
+		position: absolute;
+		z-index: -1;
+		width: 60%;
+		aspect-ratio: 1;
+		right: -20%;
+		top: -30%;
+		border-radius: 50%;
+		background: radial-gradient(circle, rgba(201, 166, 107, 0.22), transparent 70%);
+		opacity: 0;
+		transition: opacity var(--dur-slow) var(--ease-out);
+	}
+	.card:hover .card__glow {
+		opacity: 1;
+	}
+	.card__title {
+		font-size: clamp(1.6rem, 2vw + 0.8rem, 2.4rem);
+		max-width: 16ch;
+	}
+	.card__text {
+		color: var(--fg-muted);
+		max-width: 34rem;
+	}
+	.card__points {
+		display: grid;
+		gap: 0.7rem;
+		margin-top: 0.5rem;
+		padding-top: 1.25rem;
+		border-top: 1px solid var(--line);
+	}
+	.card__points li {
+		display: flex;
+		gap: 0.75rem;
+		align-items: flex-start;
+		font-size: var(--text-sm);
+	}
+	.card__points svg {
+		flex: none;
+		margin-top: 0.2rem;
+		color: var(--accent);
+	}
+	.card__cta {
+		margin-top: auto;
+		padding-top: 0.5rem;
+	}
+
+	@media (min-width: 56rem) {
+		.audiences__grid {
+			grid-template-columns: 1fr 1fr;
+			gap: 2rem;
+		}
+		.card--dark {
+			transform: translateY(2rem);
+		}
+		.card--dark:hover {
+			transform: translateY(calc(2rem - 4px));
+		}
+	}
+</style>

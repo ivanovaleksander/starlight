@@ -1,0 +1,86 @@
+---
+/**
+ * Връзка към LinkedIn профила – икона или икона + текст.
+ */
+import LinkedInIcon from './LinkedInIcon.astro';
+import { site } from '../data/site';
+
+interface Props {
+	variant?: 'icon' | 'button' | 'text';
+	label?: string;
+	class?: string;
+	size?: number;
+	[key: string]: unknown;
+}
+const {
+	variant = 'icon',
+	label = 'Вижте профила в LinkedIn',
+	class: className = '',
+	size = 20,
+	...rest
+} = Astro.props;
+const ariaLabel = 'LinkedIn профил на адвокат Тодор Хинков (отваря се в нов прозорец)';
+---
+
+<a
+	href={site.linkedin}
+	class:list={['li-link', `li-link--${variant}`, className]}
+	target="_blank"
+	rel="noopener noreferrer"
+	aria-label={variant === 'icon' ? ariaLabel : undefined}
+	{...rest}
+>
+	<LinkedInIcon size={size} />
+	{variant !== 'icon' && <span>{label}</span>}
+</a>
+
+<style>
+	.li-link {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.6rem;
+		color: inherit;
+		transition:
+			color var(--dur-fast) var(--ease-out),
+			background-color var(--dur-fast) var(--ease-out),
+			border-color var(--dur-fast) var(--ease-out),
+			transform var(--dur-fast) var(--ease-out);
+	}
+
+	.li-link--icon {
+		width: 2.5rem;
+		height: 2.5rem;
+		justify-content: center;
+		border: 1px solid var(--line-strong);
+		border-radius: 999px;
+	}
+	.li-link--icon:hover,
+	.li-link--icon:focus-visible {
+		color: var(--accent);
+		border-color: var(--accent);
+		transform: translateY(-1px);
+	}
+
+	.li-link--button {
+		padding: 0.85rem 1.35rem;
+		border: 1px solid var(--line-strong);
+		border-radius: 999px;
+		font-weight: 600;
+		font-size: var(--text-sm);
+		letter-spacing: 0.02em;
+	}
+	.li-link--button:hover,
+	.li-link--button:focus-visible {
+		border-color: var(--accent);
+		color: var(--accent);
+	}
+
+	.li-link--text {
+		font-weight: 600;
+		font-size: var(--text-sm);
+	}
+	.li-link--text:hover,
+	.li-link--text:focus-visible {
+		color: var(--accent);
+	}
+</style>

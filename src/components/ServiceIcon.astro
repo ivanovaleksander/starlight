@@ -1,0 +1,26 @@
+---
+/** Съпоставя име на икона от данните към Lucide компонент. */
+import FileText from '@lucide/astro/icons/file-text';
+import Building from '@lucide/astro/icons/building';
+import Briefcase from '@lucide/astro/icons/briefcase';
+import KeyRound from '@lucide/astro/icons/key-round';
+import ShieldCheck from '@lucide/astro/icons/shield-check';
+import type { Service } from '../data/site';
+
+interface Props {
+	name: Service['icon'];
+	size?: number;
+	class?: string;
+}
+const { name, size = 22, class: className } = Astro.props;
+const icons = {
+	'file-text': FileText,
+	building: Building,
+	briefcase: Briefcase,
+	'key-round': KeyRound,
+	'shield-check': ShieldCheck,
+};
+const Icon = icons[name];
+---
+
+<Icon size={size} stroke-width={1.5} class={className} aria-hidden="true" />

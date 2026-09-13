@@ -1,0 +1,170 @@
+---
+import LinkedInLink from './LinkedInLink.astro';
+import { site, nav, legalLinks, PLACEHOLDER } from '../data/site';
+
+const year = new Date().getFullYear();
+const c = site.contact;
+const show = (v: string | null) => v && v !== PLACEHOLDER;
+---
+
+<footer class="footer theme-dark" aria-labelledby="footer-title">
+	<div class="container">
+		<div class="footer__top">
+			<div class="footer__brand">
+				<p id="footer-title" class="footer__name">{site.brand}</p>
+				<p class="footer__person">{site.person}</p>
+				<p class="footer__tag muted">{site.tagline}</p>
+				<LinkedInLink variant="icon" size={18} class="footer__li" />
+			</div>
+
+			<nav class="footer__col" aria-label="Навигация в долната част">
+				<p class="footer__heading">Навигация</p>
+				<ul>
+					{
+						nav.map((item) => (
+							<li>
+								<a href={item.href} class="u-link footer__link">
+									{item.label}
+								</a>
+							</li>
+						))
+					}
+				</ul>
+			</nav>
+
+			<div class="footer__col">
+				<p class="footer__heading">Контакти</p>
+				<ul class="footer__contacts">
+					<li>{site.city}, {site.country}</li>
+					<li>{show(c.address) ? c.address : <span class="placeholder">Адрес – {PLACEHOLDER.toLowerCase()}</span>}</li>
+					<li>
+						{
+							show(c.phone) ? (
+								<a href={`tel:${c.phone!.replace(/\s+/g, '')}`} class="u-link footer__link">
+									{c.phone}
+								</a>
+							) : (
+								<span class="placeholder">Телефон – {PLACEHOLDER.toLowerCase()}</span>
+							)
+						}
+					</li>
+					<li>
+						{
+							show(c.email) ? (
+								<a href={`mailto:${c.email}`} class="u-link footer__link">
+									{c.email}
+								</a>
+							) : (
+								<span class="placeholder">Имейл – {PLACEHOLDER.toLowerCase()}</span>
+							)
+						}
+					</li>
+					<li>
+						<a href={site.linkedin} target="_blank" rel="noopener noreferrer" class="u-link footer__link">
+							LinkedIn
+						</a>
+					</li>
+				</ul>
+			</div>
+
+			<div class="footer__col">
+				<p class="footer__heading">Правна информация</p>
+				<ul>
+					{
+						legalLinks.map((l) => (
+							<li>
+								<a href={l.href} class="u-link footer__link">
+									{l.label}
+								</a>
+							</li>
+						))
+					}
+				</ul>
+			</div>
+		</div>
+
+		<div class="footer__bottom">
+			<p>© {year} {site.brand} · {site.person}. Всички права запазени.</p>
+			<p class="muted">Изпращането на запитване не създава автоматично отношения между адвокат и клиент.</p>
+		</div>
+	</div>
+</footer>
+
+<style>
+	.footer {
+		background: var(--navy-950);
+		color: var(--cream-2);
+		padding-block: clamp(3.5rem, 7vw, 6rem) 2rem;
+		border-top: 1px solid var(--line);
+	}
+	.footer__top {
+		display: grid;
+		gap: 2.5rem;
+	}
+	.footer__brand {
+		display: grid;
+		gap: 0.5rem;
+		align-content: start;
+	}
+	.footer__name {
+		font-family: var(--font-display);
+		font-weight: 600;
+		font-size: 1.5rem;
+		letter-spacing: 0.16em;
+		color: var(--cream);
+	}
+	.footer__person {
+		font-size: var(--text-xs);
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+		color: var(--bronze);
+	}
+	.footer__tag {
+		margin-top: 0.75rem;
+		max-width: 22rem;
+		font-size: var(--text-sm);
+	}
+	.footer__li {
+		margin-top: 1rem;
+		justify-self: start;
+	}
+	.footer__heading {
+		font-size: var(--text-xs);
+		font-weight: 600;
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+		color: var(--cream);
+		margin-bottom: 1rem;
+	}
+	.footer__col ul {
+		display: grid;
+		gap: 0.6rem;
+		font-size: var(--text-sm);
+	}
+	.footer__link:hover,
+	.footer__link:focus-visible {
+		color: var(--bronze);
+	}
+	.footer__bottom {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-between;
+		gap: 0.75rem 2rem;
+		margin-top: 3.5rem;
+		padding-top: 1.5rem;
+		border-top: 1px solid var(--line);
+		font-size: var(--text-xs);
+	}
+
+	@media (min-width: 40rem) {
+		.footer__top {
+			grid-template-columns: 1fr 1fr;
+		}
+	}
+	@media (min-width: 64rem) {
+		.footer__top {
+			grid-template-columns: 1.6fr 1fr 1fr 1fr;
+			gap: 3rem;
+		}
+	}
+</style>

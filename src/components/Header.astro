@@ -1,0 +1,313 @@
+---
+/**
+ * Фиксиран header с лого, навигация, LinkedIn икона, основен CTA
+ * и мобилно меню с плавно отваряне.
+ */
+import Menu from '@lucide/astro/icons/menu';
+import X from '@lucide/astro/icons/x';
+import Button from './Button.astro';
+import LinkedInLink from './LinkedInLink.astro';
+import { nav, site } from '../data/site';
+---
+
+<header class="header theme-dark" data-header>
+	<div class="header__inner container">
+		<a href="#nachalo" class="brand" aria-label={`${site.brand} – начало`}>
+			<span class="brand__name">{site.brand}</span>
+			<span class="brand__sub">{site.person}</span>
+		</a>
+
+		<nav class="nav" aria-label="Основна навигация">
+			<ul class="nav__list">
+				{
+					nav.map((item) => (
+						<li>
+							<a href={item.href} class="nav__link" data-nav-link={item.id}>
+								{item.label}
+							</a>
+						</li>
+					))
+				}
+			</ul>
+		</nav>
+
+		<div class="header__actions">
+			<LinkedInLink variant="icon" size={18} class="header__li" />
+			<Button href="#kontakti" variant="primary" class="header__cta">Запази консултация</Button>
+			<button
+				class="nav-toggle"
+				type="button"
+				aria-expanded="false"
+				aria-controls="mobile-menu"
+				aria-label="Отвори менюто"
+				data-nav-toggle
+			>
+				<Menu class="nav-toggle__open" size={24} aria-hidden="true" />
+				<X class="nav-toggle__close" size={24} aria-hidden="true" />
+			</button>
+		</div>
+	</div>
+
+	<div id="mobile-menu" class="mobile-menu" data-mobile-menu inert>
+		<nav aria-label="Мобилна навигация" class="mobile-menu__inner container">
+			<ul class="mobile-menu__list">
+				{
+					nav.map((item, i) => (
+						<li style={`--i:${i}`}>
+							<a href={item.href} class="mobile-menu__link" data-nav-link={item.id}>
+								<span class="mobile-menu__index">0{i + 1}</span>
+								{item.label}
+							</a>
+						</li>
+					))
+				}
+			</ul>
+			<div class="mobile-menu__footer" style={`--i:${nav.length}`}>
+				<Button href="#kontakti" variant="primary">Запази консултация</Button>
+				<LinkedInLink variant="button" label="LinkedIn профил" size={18} />
+			</div>
+		</nav>
+	</div>
+</header>
+
+<style>
+	.header {
+		position: fixed;
+		inset: 0 0 auto 0;
+		z-index: 100;
+		height: var(--header-h);
+		color: var(--cream);
+		background: transparent;
+		transition:
+			background-color var(--dur) var(--ease-out),
+			box-shadow var(--dur) var(--ease-out),
+			transform var(--dur) var(--ease-out);
+	}
+	.header::after {
+		content: '';
+		position: absolute;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		height: 1px;
+		background: var(--line);
+		opacity: 0;
+		transition: opacity var(--dur) var(--ease-out);
+	}
+	.header.is-scrolled {
+		background: rgba(12, 22, 38, 0.82);
+		-webkit-backdrop-filter: blur(14px) saturate(140%);
+		backdrop-filter: blur(14px) saturate(140%);
+	}
+	.header.is-scrolled::after {
+		opacity: 1;
+	}
+	.header.is-hidden {
+		transform: translateY(-100%);
+	}
+	.header.is-open {
+		background: var(--navy-950);
+	}
+
+	.header__inner {
+		height: 100%;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 2rem;
+	}
+
+	.brand {
+		display: flex;
+		flex-direction: column;
+		line-height: 1.1;
+		flex: none;
+	}
+	.brand__name {
+		font-family: var(--font-display);
+		font-weight: 600;
+		font-size: 1.25rem;
+		letter-spacing: 0.16em;
+	}
+	.brand__sub {
+		font-size: 0.68rem;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: var(--bronze);
+		margin-top: 0.25rem;
+	}
+
+	.nav {
+		display: none;
+	}
+	.nav__list {
+		display: flex;
+		gap: clamp(1rem, 1.8vw, 1.75rem);
+	}
+	.nav__link {
+		position: relative;
+		display: inline-block;
+		padding: 0.5rem 0;
+		font-size: var(--text-sm);
+		font-weight: 500;
+		color: var(--cream-2);
+		transition: color var(--dur-fast) var(--ease-out);
+	}
+	.nav__link::after {
+		content: '';
+		position: absolute;
+		left: 0;
+		bottom: 0.15rem;
+		width: 100%;
+		height: 1px;
+		background: var(--bronze);
+		transform: scaleX(0);
+		transform-origin: right;
+		transition: transform var(--dur) var(--ease-out);
+	}
+	.nav__link:hover,
+	.nav__link:focus-visible,
+	.nav__link[aria-current='true'] {
+		color: var(--cream);
+	}
+	.nav__link:hover::after,
+	.nav__link:focus-visible::after,
+	.nav__link[aria-current='true']::after {
+		transform: scaleX(1);
+		transform-origin: left;
+	}
+
+	.header__actions {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+	}
+	.header__actions .header__li,
+	.header__actions .header__cta {
+		display: none;
+	}
+
+	.nav-toggle {
+		position: relative;
+		display: grid;
+		place-items: center;
+		width: 2.75rem;
+		height: 2.75rem;
+		border: 1px solid var(--line-strong);
+		border-radius: 999px;
+		color: var(--cream);
+	}
+	.nav-toggle__open,
+	.nav-toggle__close {
+		grid-area: 1 / 1;
+		transition:
+			opacity var(--dur-fast) var(--ease-out),
+			transform var(--dur) var(--ease-out);
+	}
+	.nav-toggle__close {
+		opacity: 0;
+		transform: rotate(-90deg) scale(0.6);
+	}
+	.nav-toggle[aria-expanded='true'] .nav-toggle__open {
+		opacity: 0;
+		transform: rotate(90deg) scale(0.6);
+	}
+	.nav-toggle[aria-expanded='true'] .nav-toggle__close {
+		opacity: 1;
+		transform: none;
+	}
+
+	/* Мобилно меню */
+	.mobile-menu {
+		position: fixed;
+		inset: var(--header-h) 0 0 0;
+		background: var(--navy-950);
+		color: var(--cream);
+		overflow-y: auto;
+		opacity: 0;
+		visibility: hidden;
+		transition:
+			opacity var(--dur) var(--ease-out),
+			visibility 0s linear var(--dur);
+	}
+	.mobile-menu.is-open {
+		opacity: 1;
+		visibility: visible;
+		transition: opacity var(--dur) var(--ease-out);
+	}
+	.mobile-menu__inner {
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		min-height: 100%;
+		padding-block: 2rem 2.5rem;
+		gap: 2rem;
+	}
+	.mobile-menu__list li,
+	.mobile-menu__footer {
+		opacity: 0;
+		transform: translateY(14px);
+		transition:
+			opacity var(--dur) var(--ease-out),
+			transform var(--dur) var(--ease-out);
+		transition-delay: calc(var(--i) * 45ms + 80ms);
+	}
+	.mobile-menu.is-open .mobile-menu__list li,
+	.mobile-menu.is-open .mobile-menu__footer {
+		opacity: 1;
+		transform: none;
+	}
+	.mobile-menu__link {
+		display: flex;
+		align-items: baseline;
+		gap: 1rem;
+		padding: 0.85rem 0;
+		border-bottom: 1px solid var(--line);
+		font-family: var(--font-display);
+		font-size: clamp(1.6rem, 6vw, 2.2rem);
+		line-height: 1.1;
+		transition: color var(--dur-fast) var(--ease-out);
+	}
+	.mobile-menu__link:hover,
+	.mobile-menu__link:focus-visible,
+	.mobile-menu__link[aria-current='true'] {
+		color: var(--bronze);
+	}
+	.mobile-menu__index {
+		font-family: var(--font-sans);
+		font-size: var(--text-xs);
+		letter-spacing: 0.12em;
+		color: var(--bronze);
+	}
+	.mobile-menu__footer {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.75rem;
+	}
+
+	@media (min-width: 64rem) {
+		.nav {
+			display: block;
+		}
+		.header__actions .header__li,
+		.header__actions .header__cta {
+			display: inline-flex;
+		}
+		.nav-toggle,
+		.mobile-menu {
+			display: none;
+		}
+	}
+	@media (min-width: 64rem) and (max-width: 76rem) {
+		.header__actions .header__cta {
+			display: none;
+		}
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.mobile-menu,
+		.mobile-menu__list li,
+		.mobile-menu__footer {
+			transition: none;
+		}
+	}
+</style>

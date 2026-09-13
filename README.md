@@ -1,54 +1,57 @@
-# Starlight Starter Kit: Basics
+# HINKOV LAW – Адвокат Тодор Хинков
 
-[![Built with Starlight](https://astro.badg.es/v2/built-with-starlight/tiny.svg)](https://starlight.astro.build)
+Уебсайт на адвокатска кантора HINKOV LAW (Пловдив, България), изграден с [Astro](https://astro.build) като статичен сайт без клиентски framework. Цялото съдържание е на български език.
 
-```
-npm create astro@latest -- --template starlight
-```
+## Стартиране
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/withastro/starlight/tree/main/examples/basics)
-[![Open with CodeSandbox](https://assets.codesandbox.io/github/button-edit-lime.svg)](https://codesandbox.io/p/sandbox/github/withastro/starlight/tree/main/examples/basics)
-[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/withastro/starlight&create_from_path=examples/basics)
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fwithastro%2Fstarlight%2Ftree%2Fmain%2Fexamples%2Fbasics&project-name=my-starlight-docs&repository-name=my-starlight-docs)
-
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
-
-## 🚀 Project Structure
-
-Inside of your Astro + Starlight project, you'll see the following folders and files:
-
-```
-.
-├── public/
-├── src/
-│   ├── assets/
-│   ├── content/
-│   │   ├── docs/
-│   └── content.config.ts
-├── astro.config.mjs
-├── package.json
-└── tsconfig.json
+```bash
+npm install
+npm run dev       # локален сървър на http://localhost:4321
+npm run build     # production build в ./dist
+npm run preview   # преглед на build-а
+npm run check     # проверка на типовете (astro check)
+npm run og        # регенерира public/og.png и apple-touch-icon.png
 ```
 
-Starlight looks for `.md` or `.mdx` files in the `src/content/docs/` directory. Each file is exposed as a route based on its file name.
+## Структура
 
-Images can be added to `src/assets/` and embedded in Markdown with a relative link.
+```
+src/
+├── data/site.ts            # ЕДИНСТВЕНОТО място за текстове, контакти, услуги, навигация
+├── layouts/
+│   ├── BaseLayout.astro    # <head>, SEO, Open Graph, JSON-LD, header/footer
+│   └── LegalLayout.astro   # layout за политиките (временно съдържание)
+├── components/             # секции и общи елементи (Header, Hero, Practice, About…)
+├── scripts/
+│   ├── main.ts             # header, мобилно меню, reveal анимации, активна навигация
+│   └── contact-form.ts     # валидиране и изпращане на контактната форма
+├── styles/global.css       # дизайн токени, типография, reset, анимации
+└── pages/                  # index + три правни подстраници
+public/                     # favicon, OG изображение, портрет placeholder, robots.txt
+scripts/generate-og.mjs     # генерира OG изображението чрез sharp
+```
 
-Static assets, like favicons, can be placed in the `public/` directory.
+## Какво трябва да се предостави / свърже преди публикуване
 
-## 🧞 Commands
+| Елемент | Къде | Статус |
+| --- | --- | --- |
+| Портрет на адвокат Хинков | `public/images/portrait-placeholder.svg` → заменете и обновете `src` в `Hero.astro` и `About.astro` | placeholder |
+| Биография, образование, опит | `src/components/About.astro` (масивът `facts`) | placeholder |
+| Адрес, телефон, имейл, работно време | `src/data/site.ts` → `site.contact` | placeholder |
+| Карта | `site.contact.mapEmbedUrl` – показва се само ако е зададен | изключена |
+| Публикации | `src/data/site.ts` → `publications` | **демо съдържание** |
+| Политики (поверителност, бисквитки, правна информация) | `src/pages/politika-*.astro`, `pravna-informacia.astro` | временен текст, `noindex` |
+| Публичен домейн | `PUBLIC_SITE_URL` (Netlify подава `URL` автоматично) | – |
+| Backend на контактната форма | `PUBLIC_CONTACT_ENDPOINT` (виж `.env.example` и `src/scripts/contact-form.ts`) | **не е свързан** |
 
-All commands are run from the root of the project, from a terminal:
+### Контактна форма
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+Формата има пълно клиентско валидиране, honeypot и състояния за успех/грешка, но **няма реален backend**. Без зададен `PUBLIC_CONTACT_ENDPOINT` тя работи в демо режим: валидира, показва успешно състояние и записва предупреждение в конзолата, без да изпраща данни. Мястото за свързване е ясно отбелязано в `src/scripts/contact-form.ts` – endpoint-ът трябва да приема `POST` с JSON `{ name, phone, email, topic, message, consent, page, submittedAt }` (Netlify Function, Formspree, собствен API и др.).
 
-## 👀 Want to learn more?
+## Принципи
 
-Check out [Starlight’s docs](https://starlight.astro.build/), read [the Astro documentation](https://docs.astro.build), or jump into the [Astro Discord server](https://astro.build/chat).
+- Не се измислят биография, квалификации, брой дела, години опит, награди или отзиви – липсващата информация е означена като placeholder.
+- Структурираните данни (`LegalService` / `Attorney`) съдържат само потвърдена информация: име, град, LinkedIn и области на практика.
+- Шрифтовете (Playfair Display, Manrope) се хостват локално – без външни заявки към Google Fonts.
+- Анимациите спазват `prefers-reduced-motion`; без JavaScript цялото съдържание е видимо.
+- Иконите са от [Lucide](https://lucide.dev); LinkedIn иконата е официалната форма от Simple Icons (Lucide не поддържа брандови икони).

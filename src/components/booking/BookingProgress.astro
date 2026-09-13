@@ -1,0 +1,27 @@
+---
+/** Индикатор на трите стъпки. Състоянието се управлява от src/scripts/booking.ts. */
+import Check from '@lucide/astro/icons/check';
+
+const steps = [
+	{ n: 1, label: 'Вид консултация' },
+	{ n: 2, label: 'Дата и час' },
+	{ n: 3, label: 'Вашите данни' },
+];
+---
+
+<ol class="bk-progress" aria-label="Стъпки на резервацията">
+	{
+		steps.map((s) => (
+			<li class="bk-progress__step" data-progress-step={s.n} data-state={s.n === 1 ? 'current' : 'upcoming'}>
+				<span class="bk-progress__num" aria-hidden="true">
+					<span class="bk-progress__n">{s.n}</span>
+					<Check class="bk-progress__check" size={16} stroke-width={2.2} aria-hidden="true" />
+				</span>
+				<span class="bk-progress__label">
+					{s.label}
+					<span class="bk-progress__note" data-progress-note />
+				</span>
+			</li>
+		))
+	}
+</ol>

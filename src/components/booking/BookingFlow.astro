@@ -1,0 +1,116 @@
+---
+/**
+ * Процес за резервиране на консултация в 3 стъпки.
+ * Markup: тук и в подкомпонентите. Поведение: src/scripts/booking.ts. Стилове: src/styles/booking.css
+ * (глобални с префикс .bk-, защото част от елементите се генерират в браузъра).
+ * Настройки и интеграция с Microsoft Bookings: src/config/booking.ts.
+ */
+import '../../styles/booking.css';
+import ArrowLeft from '@lucide/astro/icons/arrow-left';
+import ArrowRight from '@lucide/astro/icons/arrow-right';
+import CircleCheck from '@lucide/astro/icons/circle-check';
+import CircleAlert from '@lucide/astro/icons/circle-alert';
+import ExternalLink from '@lucide/astro/icons/external-link';
+import BookingProgress from './BookingProgress.astro';
+import ServiceSelector from './ServiceSelector.astro';
+import BookingCalendar from './BookingCalendar.astro';
+import AvailableTimes from './AvailableTimes.astro';
+import BookingDetailsForm from './BookingDetailsForm.astro';
+import { BOOKING_CONFIG } from '../../config/booking';
+---
+
+<section class="bk" data-booking aria-labelledby="bk-title">
+	<header class="bk__head">
+		<h3 id="bk-title" class="bk__title">Запазете консултация</h3>
+		<p class="bk__sub">Изберете удобен формат, дата и час.</p>
+	</header>
+
+	<form class="bk__form" data-booking-form novalidate>
+		<!-- Стъпка 1 -->
+		<div class="bk__panel" data-step-panel="1">
+			<h4 class="bk__step-title" tabindex="-1" data-step-title>Стъпка 1 от 3: вид консултация</h4>
+			<ServiceSelector />
+			<div class="bk__actions">
+				<span></span>
+				<button type="button" class="bk-btn bk-btn--primary" data-next disabled>
+					Продължи <ArrowRight size={18} stroke-width={1.7} aria-hidden="true" />
+				</button>
+			</div>
+		</div>
+
+		<!-- Стъпка 2 -->
+		<div class="bk__panel" data-step-panel="2" hidden>
+			<h4 class="bk__step-title" tabindex="-1" data-step-title>Стъпка 2 от 3: дата и час</h4>
+			<div class="bk__schedule">
+				<BookingCalendar />
+				<AvailableTimes />
+			</div>
+			<div class="bk__actions">
+				<button type="button" class="bk-btn bk-btn--ghost" data-back>
+					<ArrowLeft size={18} stroke-width={1.7} aria-hidden="true" /> Назад
+				</button>
+				<button type="button" class="bk-btn bk-btn--primary" data-next disabled>
+					Продължи <ArrowRight size={18} stroke-width={1.7} aria-hidden="true" />
+				</button>
+			</div>
+		</div>
+
+		<!-- Стъпка 3 -->
+		<div class="bk__panel" data-step-panel="3" hidden>
+			<h4 class="bk__step-title" tabindex="-1" data-step-title>Стъпка 3 от 3: вашите данни</h4>
+			<dl class="bk-summary" data-summary aria-label="Обобщение на резервацията">
+				<div><dt>Вид</dt><dd data-summary-service>–</dd></div>
+				<div data-summary-when-row><dt>Дата и час</dt><dd data-summary-when>–</dd></div>
+			</dl>
+			<BookingDetailsForm />
+			<div class="bk__actions">
+				<button type="button" class="bk-btn bk-btn--ghost" data-back>
+					<ArrowLeft size={18} stroke-width={1.7} aria-hidden="true" /> Назад
+				</button>
+				<button type="submit" class="bk-btn bk-btn--primary" data-submit>
+					Потвърди резервацията
+				</button>
+			</div>
+			<p class="bk__status" data-booking-status role="status" aria-live="polite"></p>
+			<p class="bk__disclaimer">
+				Изпращането на резервация не създава автоматично отношения между адвокат и клиент.
+			</p>
+		</div>
+	</form>
+
+	<!-- Успех -->
+	<div class="bk__done" data-booking-success hidden tabindex="-1">
+		<CircleCheck size={40} stroke-width={1.4} aria-hidden="true" />
+		<h4>Заявката е изпратена.</h4>
+		<p data-success-text>Благодаря за доверието. Ще получите потвърждение на посочения имейл или телефон.</p>
+		{
+			BOOKING_CONFIG.bookingPageUrl && (
+				<a
+					class="bk-btn bk-btn--primary"
+					href={BOOKING_CONFIG.bookingPageUrl}
+					target="_blank"
+					rel="noopener noreferrer"
+					data-success-bookings
+				>
+					Избери точен час в Microsoft Bookings <ExternalLink size={16} aria-hidden="true" />
+				</a>
+			)
+		}
+		<p class="bk__disclaimer">
+			Изпращането на резервация не създава автоматично отношения между адвокат и клиент.
+		</p>
+	</div>
+
+	<!-- Грешка при изпращане -->
+	<div class="bk__failure" data-booking-failure hidden role="alert">
+		<CircleAlert size={22} aria-hidden="true" />
+		<p>Заявката не можа да бъде изпратена. Опитайте отново или се свържете директно по телефон или имейл.</p>
+	</div>
+
+	<BookingProgress />
+</section>
+
+<script>
+	import { initBooking } from '../../scripts/booking';
+	initBooking();
+</script>

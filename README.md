@@ -24,7 +24,9 @@ src/
 ├── components/             # секции и общи елементи (Header, Hero, Practice, About…)
 ├── scripts/
 │   ├── main.ts             # header, мобилно меню, reveal анимации, активна навигация
-│   └── contact-form.ts     # валидиране и изпращане на контактната форма
+│   └── booking.ts          # процес за резервиране на консултация (3 стъпки)
+├── config/booking.ts       # настройки на резервациите и интеграция с Microsoft Bookings
+├── components/booking/     # BookingFlow, ServiceSelector, BookingCalendar, AvailableTimes…
 ├── styles/global.css       # дизайн токени, типография, reset, анимации
 └── pages/                  # index + три правни подстраници
 public/                     # favicon, OG изображение, портрет placeholder, robots.txt
@@ -42,11 +44,18 @@ scripts/generate-og.mjs     # генерира OG изображението ч�
 | Публикации | `src/data/site.ts` → `publications` | **демо съдържание** |
 | Политики (поверителност, бисквитки, правна информация) | `src/pages/politika-*.astro`, `pravna-informacia.astro` | временен текст, `noindex` |
 | Публичен домейн | `PUBLIC_SITE_URL` (Netlify подава `URL` автоматично) | – |
-| Backend на контактната форма | `PUBLIC_CONTACT_ENDPOINT` (виж `.env.example` и `src/scripts/contact-form.ts`) | **не е свързан** |
+| Microsoft Bookings страница | `PUBLIC_BOOKING_PAGE_URL` (виж `.env.example` и `src/config/booking.ts`) | **не е свързана** |
+| API за реална наличност / резервации | `PUBLIC_BOOKING_AVAILABILITY_URL`, `PUBLIC_BOOKING_CREATE_URL` | по избор |
+| Канал за заявки (резервен) | `PUBLIC_CONTACT_ENDPOINT` | **не е свързан** |
 
-### Контактна форма
+### Резервиране на консултация
 
-Формата има пълно клиентско валидиране, honeypot и състояния за успех/грешка, но **няма реален backend**. Без зададен `PUBLIC_CONTACT_ENDPOINT` тя работи в демо режим: валидира, показва успешно състояние и записва предупреждение в конзолата, без да изпраща данни. Мястото за свързване е ясно отбелязано в `src/scripts/contact-form.ts` – endpoint-ът трябва да приема `POST` с JSON `{ name, phone, email, topic, message, consent, page, submittedAt }` (Netlify Function, Formspree, собствен API и др.).
+Секцията „Запазете консултация“ е процес в три стъпки: вид консултация → дата и час → данни. Настройките са в `src/config/booking.ts`, поведението в `src/scripts/booking.ts`, компонентите в `src/components/booking/`.
+
+- **Microsoft Bookings:** задайте `PUBLIC_BOOKING_PAGE_URL` с публичния адрес на страницата (`https://outlook.office.com/book/…`). При потвърждаване тя се отваря в нов раздел, за да се избере точният час. Ако адресът липсва, интерфейсът показва разбираемо съобщение вместо счупен бутон.
+- **Реална наличност (по избор):** `PUBLIC_BOOKING_AVAILABILITY_URL` (GET `?service=&date=` → `{ slots: [{ start, end }] }`) показва свободните часове в самия сайт, а `PUBLIC_BOOKING_CREATE_URL` (POST JSON) създава резервацията. Без тях сайтът **не показва измислени часове** – в production потребителят избира предпочитана дата, а часът се потвърждава в Microsoft Bookings.
+- **Демо часове** се показват само при `npm run dev` и без API, за преглед на интерфейса.
+- **Заявката** (име, имейл, телефон, тема, описание, вид, дата) се изпраща към `PUBLIC_BOOKING_CREATE_URL` или, ако липсва, към `PUBLIC_CONTACT_ENDPOINT`. Без нито един от двата е демо режим с предупреждение в конзолата; нищо не се записва в localStorage.
 
 ## Принципи
 

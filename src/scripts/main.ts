@@ -1,8 +1,8 @@
 /**
  * Клиентски скриптове: header, мобилно меню, reveal анимации,
  * активна секция в навигацията, предварителен избор на тема във формата.
+ * (Резервирането на консултация има собствен скрипт: src/scripts/booking.ts)
  */
-import { initContactForm } from './contact-form';
 
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -150,7 +150,6 @@ initMobileMenu();
 initReveal();
 initActiveNav();
 initTopicPreselect();
-initContactForm();
 
 /* ---------- Правни документи в модален прозорец ---------- */
 function initLegalDialog() {

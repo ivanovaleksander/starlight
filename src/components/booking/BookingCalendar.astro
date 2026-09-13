@@ -1,0 +1,30 @@
+---
+/**
+ * Стъпка 2 – календар по месеци. Клетките с дните се генерират в src/scripts/booking.ts,
+ * защото зависят от текущата дата, часовата зона и минималното предизвестие.
+ */
+import ChevronLeft from '@lucide/astro/icons/chevron-left';
+import ChevronRight from '@lucide/astro/icons/chevron-right';
+
+const weekdays = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Нд'];
+---
+
+<div class="bk-calendar" data-calendar>
+	<div class="bk-calendar__head">
+		<button type="button" class="bk-calendar__nav" data-calendar-prev aria-label="Предишен месец">
+			<ChevronLeft size={20} stroke-width={1.7} aria-hidden="true" />
+		</button>
+		<h4 class="bk-calendar__month" data-calendar-month aria-live="polite">Месец</h4>
+		<button type="button" class="bk-calendar__nav" data-calendar-next aria-label="Следващ месец">
+			<ChevronRight size={20} stroke-width={1.7} aria-hidden="true" />
+		</button>
+	</div>
+	<div class="bk-calendar__weekdays" aria-hidden="true">
+		{weekdays.map((d) => <span>{d}</span>)}
+	</div>
+	<div class="bk-calendar__grid" data-calendar-grid role="group" aria-label="Избор на дата"></div>
+	<p class="bk-calendar__legend">
+		<span class="bk-calendar__legend-dot" aria-hidden="true"></span>
+		Свободни за избор са работните дни най-рано след {'{notice}'} ч.
+	</p>
+</div>

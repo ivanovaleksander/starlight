@@ -1,0 +1,65 @@
+---
+/**
+ * Стъпка 3 – данни на клиента. Валидирането и изпращането са в src/scripts/booking.ts.
+ * Полето „Тема“ запазва id="f-topic", за да работи предварителният избор от секция „Услуги“.
+ */
+import ShieldAlert from '@lucide/astro/icons/shield-alert';
+import { contactTopics } from '../../data/site';
+---
+
+<div class="bk-form">
+	<div class="bk-form__row">
+		<div class="bk-field">
+			<label for="f-name">Име и фамилия <span aria-hidden="true">*</span></label>
+			<input id="f-name" name="name" type="text" autocomplete="name" required minlength="2" aria-describedby="f-name-err" />
+			<p class="bk-field__error" id="f-name-err" role="alert"></p>
+		</div>
+		<div class="bk-field">
+			<label for="f-email">Имейл <span aria-hidden="true">*</span></label>
+			<input id="f-email" name="email" type="email" autocomplete="email" required aria-describedby="f-email-err" />
+			<p class="bk-field__error" id="f-email-err" role="alert"></p>
+		</div>
+	</div>
+
+	<div class="bk-form__row">
+		<div class="bk-field">
+			<label for="f-phone">Телефон <span aria-hidden="true">*</span></label>
+			<input id="f-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" required aria-describedby="f-phone-err" />
+			<p class="bk-field__error" id="f-phone-err" role="alert"></p>
+		</div>
+		<div class="bk-field">
+			<label for="f-topic">Тема на консултацията <span aria-hidden="true">*</span></label>
+			<select id="f-topic" name="topic" required aria-describedby="f-topic-err">
+				<option value="">Изберете тема</option>
+				{contactTopics.map((t) => <option value={t}>{t}</option>)}
+			</select>
+			<p class="bk-field__error" id="f-topic-err" role="alert"></p>
+		</div>
+	</div>
+
+	<div class="bk-field">
+		<label for="f-message">Кратко описание <span aria-hidden="true">*</span></label>
+		<textarea id="f-message" name="message" rows="4" required minlength="20" maxlength="2000" aria-describedby="f-message-err f-message-warn"></textarea>
+		<p class="bk-field__warn" id="f-message-warn">
+			<ShieldAlert size={16} stroke-width={1.7} aria-hidden="true" />
+			Моля, не въвеждайте ЕГН, номера на документи или други чувствителни лични данни.
+		</p>
+		<p class="bk-field__error" id="f-message-err" role="alert"></p>
+	</div>
+
+	<div class="bk-field bk-field--check">
+		<input id="f-consent" name="consent" type="checkbox" required aria-describedby="f-consent-err" />
+		<label for="f-consent">
+			Съгласен/на съм личните ми данни да бъдат обработени за целите на резервацията съгласно
+			<a href="/politika-za-poveritelnost" class="u-link" data-legal-open="privacy">Политиката за поверителност</a>.
+			<span aria-hidden="true">*</span>
+		</label>
+		<p class="bk-field__error" id="f-consent-err" role="alert"></p>
+	</div>
+
+	<!-- Honeypot срещу спам ботове -->
+	<div class="bk-hp" aria-hidden="true">
+		<label for="f-website">Уебсайт</label>
+		<input id="f-website" name="website" type="text" tabindex="-1" autocomplete="off" />
+	</div>
+</div>

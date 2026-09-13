@@ -1,0 +1,43 @@
+---
+/**
+ * Стъпка 1 – избор на вид консултация. Четири карти върху radio полета:
+ * достъпни за клавиатура (стрелки/Tab/Space) без допълнителен JavaScript.
+ * Иконите са от Lucide (@lucide/astro): Building2, Video, PhoneCall, MessageSquareText.
+ */
+import Building2 from '@lucide/astro/icons/building';
+import Video from '@lucide/astro/icons/video';
+import PhoneCall from '@lucide/astro/icons/phone-call';
+import MessageSquareText from '@lucide/astro/icons/message-square-text';
+import { BOOKING_CONFIG, SERVICE_KEYS } from '../../config/booking';
+
+const icons = { office: Building2, teams: Video, phone: PhoneCall, written: MessageSquareText };
+---
+
+<fieldset class="bk-services">
+	<legend class="visually-hidden">Вид консултация</legend>
+	<div class="bk-services__grid">
+		{
+			SERVICE_KEYS.map((key) => {
+				const s = BOOKING_CONFIG.services[key];
+				const Icon = icons[key];
+				return (
+					<label class="bk-service">
+						<input
+							class="bk-service__input"
+							type="radio"
+							name="service"
+							value={key}
+							data-service-input
+							data-duration={s.duration ?? ''}
+						/>
+						<span class="bk-service__card">
+							<Icon size={28} stroke-width={1.7} aria-hidden="true" class="bk-service__icon" />
+							<span class="bk-service__name">{s.name}</span>
+							<span class="bk-service__hint">{s.hint}</span>
+						</span>
+					</label>
+				);
+			})
+		}
+	</div>
+</fieldset>

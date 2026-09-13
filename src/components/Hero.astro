@@ -1,0 +1,356 @@
+---
+/**
+ * Начална (hero) секция: заглавие, подзаглавие, бутони, портрет placeholder
+ * и дискретен динамичен елемент – „стратегически път“ (анимирана линия
+ * през абстрактна геометрична мрежа) + бавно движещ се градиент.
+ */
+import Button from './Button.astro';
+import Portrait from './Portrait.astro';
+import { services } from '../data/site';
+import { t, i18n, i18nAttr } from '../i18n';
+---
+
+<section id="nachalo" class="hero theme-dark" aria-labelledby="hero-title">
+	<!-- Декоративен фон: мрежа + анимиран път -->
+	<div class="hero__bg" aria-hidden="true">
+		<div class="hero__glow hero__glow--1"></div>
+		<div class="hero__glow hero__glow--2"></div>
+		<svg class="hero__grid" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice">
+			<defs>
+				<pattern id="grid" width="80" height="80" patternUnits="userSpaceOnUse">
+					<path d="M80 0H0V80" fill="none" stroke="currentColor" stroke-width="0.6" />
+				</pattern>
+				<linearGradient id="path-grad" x1="0" x2="1" y1="0" y2="0">
+					<stop offset="0" stop-color="#c9a66b" stop-opacity="0" />
+					<stop offset="0.5" stop-color="#c9a66b" />
+					<stop offset="1" stop-color="#c9a66b" stop-opacity="0" />
+				</linearGradient>
+			</defs>
+			<rect width="1440" height="900" fill="url(#grid)" class="hero__grid-fill" />
+			<!-- Стратегически път: намиране на правилната посока -->
+			<g class="hero__path">
+				<path
+					class="hero__path-line"
+					d="M-40 720 L240 720 L400 560 L720 560 L880 400 L1160 400 L1320 240 L1500 240"
+					fill="none"
+					stroke="url(#path-grad)"
+					stroke-width="1.5"
+				/>
+				<path
+					class="hero__path-dash"
+					d="M-40 720 L240 720 L400 560 L720 560 L880 400 L1160 400 L1320 240 L1500 240"
+					fill="none"
+					stroke="#c9a66b"
+					stroke-width="1.5"
+					stroke-linecap="round"
+				/>
+				<g class="hero__nodes" fill="#c9a66b">
+					<circle cx="240" cy="720" r="3" style="--d:0s" />
+					<circle cx="400" cy="560" r="3" style="--d:0.6s" />
+					<circle cx="720" cy="560" r="3" style="--d:1.2s" />
+					<circle cx="880" cy="400" r="3" style="--d:1.8s" />
+					<circle cx="1160" cy="400" r="3" style="--d:2.4s" />
+					<circle cx="1320" cy="240" r="3" style="--d:3s" />
+				</g>
+			</g>
+		</svg>
+	</div>
+
+	<div class="hero__inner container">
+		<div class="hero__content">
+			<p class="eyebrow hero__eyebrow" data-reveal {...i18n('hero.eyebrow')}>{t('hero.eyebrow')}</p>
+			<h1 id="hero-title" class="hero__title" data-reveal style="--reveal-delay:1" {...i18n('site.tagline')}>
+				{t('site.tagline')}
+			</h1>
+			<p class="hero__sub lead" data-reveal style="--reveal-delay:2" {...i18n('site.subtitle')}>{t('site.subtitle')}</p>
+			<div class="hero__actions" data-reveal style="--reveal-delay:3">
+				<Button href="#kontakti" variant="primary" arrow {...i18n('hero.ctaPrimary')}>{t('hero.ctaPrimary')}</Button>
+				<Button href="#uslugi" variant="ghost" {...i18n('hero.ctaSecondary')}>{t('hero.ctaSecondary')}</Button>
+			</div>
+		</div>
+
+		<figure class="hero__portrait" data-reveal style="--reveal-delay:2">
+			<div class="hero__portrait-frame">
+				<!-- Реалната снимка: src/assets/portrait/hero.jpg (виж README там) -->
+				<Portrait variant="hero" loading="eager" sizes="(min-width: 56rem) 24rem, 80vw" />
+			</div>
+			<figcaption class="hero__caption">
+				<span {...i18n('site.person')}>{t('site.person')}</span>
+				<span class="muted"><span {...i18n('site.city')}>{t('site.city')}</span>, <span {...i18n('site.country')}>{t('site.country')}</span></span>
+			</figcaption>
+		</figure>
+	</div>
+
+	<div class="hero__foot container" data-reveal style="--reveal-delay:4">
+		<ul class="hero__areas" {...i18nAttr({ 'aria-label': 'hero.areasLabel' })}>
+			{services.map((s) => <li {...i18n(`services.items.${s.key}.title`)}>{t(`services.items.${s.key}.title`)}</li>)}
+		</ul>
+		<a href="#uslugi" class="hero__scroll" {...i18nAttr({ 'aria-label': 'hero.scrollAria' })}>
+			<span class="hero__scroll-line"></span>
+			<span {...i18n('hero.scroll')}>{t('hero.scroll')}</span>
+		</a>
+	</div>
+</section>
+
+<style>
+	.hero {
+		position: relative;
+		min-height: min(100svh, 60rem);
+		display: flex;
+		flex-direction: column;
+		/* „safe center“ не скрива съдържанието под header-а, когато то е по-високо от прозореца */
+		justify-content: flex-start;
+		justify-content: safe center;
+		padding-top: calc(var(--header-total) + 2.5rem);
+		padding-bottom: 2rem;
+		background: var(--navy-900);
+		color: var(--cream);
+		overflow: hidden;
+	}
+
+	/* Фон */
+	.hero__bg {
+		position: absolute;
+		inset: 0;
+		pointer-events: none;
+	}
+	.hero__glow {
+		position: absolute;
+		border-radius: 50%;
+		filter: blur(80px);
+		opacity: 0.55;
+		animation: hero-drift 18s var(--ease-in-out) infinite alternate;
+	}
+	.hero__glow--1 {
+		width: 55vw;
+		height: 55vw;
+		top: -20vw;
+		right: -15vw;
+		background: radial-gradient(circle, rgba(36, 57, 92, 0.9), rgba(12, 22, 38, 0));
+	}
+	.hero__glow--2 {
+		width: 40vw;
+		height: 40vw;
+		bottom: -18vw;
+		left: -10vw;
+		background: radial-gradient(circle, rgba(176, 141, 87, 0.28), rgba(12, 22, 38, 0));
+		animation-delay: -9s;
+		animation-duration: 24s;
+	}
+	@keyframes hero-drift {
+		from {
+			transform: translate3d(0, 0, 0) scale(1);
+		}
+		to {
+			transform: translate3d(-4vw, 3vw, 0) scale(1.12);
+		}
+	}
+	.hero__grid {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		color: rgba(201, 166, 107, 0.16);
+		mask-image: radial-gradient(ellipse 80% 70% at 60% 45%, #000 20%, transparent 80%);
+		-webkit-mask-image: radial-gradient(ellipse 80% 70% at 60% 45%, #000 20%, transparent 80%);
+	}
+	.hero__path-line {
+		opacity: 0.45;
+	}
+	.hero__path-dash {
+		stroke-dasharray: 140 1600;
+		stroke-dashoffset: 1740;
+		animation: path-travel 9s linear infinite;
+	}
+	@keyframes path-travel {
+		to {
+			stroke-dashoffset: 0;
+		}
+	}
+	.hero__nodes circle {
+		opacity: 0.35;
+		transform-box: fill-box;
+		transform-origin: center;
+		animation: node-pulse 4.5s var(--ease-in-out) infinite;
+		animation-delay: var(--d);
+	}
+	@keyframes node-pulse {
+		0%,
+		100% {
+			opacity: 0.3;
+			transform: scale(1);
+		}
+		50% {
+			opacity: 1;
+			transform: scale(1.8);
+		}
+	}
+
+	/* Съдържание */
+	.hero__inner {
+		position: relative;
+		display: grid;
+		gap: 3rem;
+		align-items: center;
+	}
+	.hero__content {
+		max-width: 44rem;
+	}
+	.hero__eyebrow {
+		margin-bottom: 1.75rem;
+	}
+	.hero__title {
+		max-width: 14ch;
+	}
+	.hero__sub {
+		margin-top: 1.5rem;
+		max-width: 36rem;
+	}
+	.hero__actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.85rem;
+		margin-top: 2.25rem;
+	}
+
+	/* Портрет */
+	.hero__portrait {
+		margin: 0;
+		position: relative;
+		max-width: 22rem;
+		justify-self: start;
+	}
+	.hero__portrait-frame {
+		position: relative;
+		aspect-ratio: 4 / 5;
+		border-radius: var(--radius-lg);
+		overflow: hidden;
+		background: var(--navy-800);
+		box-shadow: 0 40px 80px -30px rgba(0, 0, 0, 0.7);
+	}
+	.hero__portrait-frame::before {
+		content: '';
+		position: absolute;
+		inset: -0.9rem 0.9rem 0.9rem -0.9rem;
+		border: 1px solid var(--line-strong);
+		border-radius: var(--radius-lg);
+		z-index: -1;
+	}
+	.hero__portrait-frame :global(img) {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		object-position: center top;
+	}
+	.hero__portrait {
+		animation: float-slow 9s var(--ease-in-out) infinite;
+	}
+	.hero__caption {
+		display: flex;
+		justify-content: space-between;
+		gap: 1rem;
+		margin-top: 1rem;
+		font-size: var(--text-sm);
+		letter-spacing: 0.02em;
+	}
+
+	/* Долна лента */
+	.hero__foot {
+		position: relative;
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-between;
+		align-items: center;
+		gap: 1.5rem;
+		margin-top: clamp(3rem, 7vw, 6rem);
+		padding-top: 1.5rem;
+		border-top: 1px solid var(--line);
+	}
+	.hero__areas {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem 1.5rem;
+		font-size: var(--text-xs);
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+		color: var(--cream-3);
+	}
+	.hero__areas li {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+	}
+	.hero__areas li + li::before {
+		content: '';
+		width: 4px;
+		height: 4px;
+		border-radius: 50%;
+		background: var(--bronze-2);
+	}
+	.hero__scroll {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.75rem;
+		font-size: var(--text-xs);
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+		color: var(--cream-2);
+	}
+	.hero__scroll-line {
+		position: relative;
+		width: 3rem;
+		height: 1px;
+		background: var(--line-strong);
+		overflow: hidden;
+	}
+	.hero__scroll-line::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background: var(--bronze);
+		animation: line-sweep 2.2s var(--ease-in-out) infinite;
+	}
+
+	@media (min-width: 56rem) {
+		.hero__inner {
+			grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+			gap: 4rem;
+		}
+		.hero__portrait {
+			justify-self: end;
+			width: 100%;
+			max-width: 24rem;
+		}
+	}
+	@media (max-width: 55.99rem) {
+		.hero__portrait {
+			max-width: 20rem;
+		}
+		.hero__portrait-frame::before {
+			display: none;
+		}
+		.hero__areas {
+			flex-direction: column;
+			gap: 0.45rem;
+		}
+		.hero__areas li + li::before {
+			display: none;
+		}
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.hero__glow,
+		.hero__path-dash,
+		.hero__nodes circle,
+		.hero__portrait,
+		.hero__scroll-line::after {
+			animation: none;
+		}
+		.hero__path-dash {
+			stroke-dasharray: none;
+			opacity: 0.6;
+		}
+		.hero__nodes circle {
+			opacity: 0.8;
+		}
+	}
+</style>

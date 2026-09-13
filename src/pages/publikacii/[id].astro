@@ -1,0 +1,33 @@
+---
+import { getCollection, render } from 'astro:content';
+import ArticleLayout from '../../layouts/ArticleLayout.astro';
+import { CATEGORY_KEYS } from '../../i18n';
+import { readingTime } from '../../i18n/publications';
+
+export async function getStaticPaths() {
+	const posts = await getCollection('publications');
+	const bg = posts.filter((p) => p.id.startsWith('bg/'));
+	return bg.map((post) => {
+		const slug = post.id.slice(3);
+		const en = posts.find((p) => p.id === `en/${slug}`) ?? null;
+		return { params: { id: slug }, props: { post, en } };
+	});
+}
+
+const { post, en } = Astro.props;
+const { Content } = await render(post);
+const EnContent = en ? (await render(en)).Content : null;
+---
+
+<ArticleLayout
+	title={{ bg: post.data.title, en: en?.data.title ?? post.data.title }}
+	categoryKey={CATEGORY_KEYS[post.data.category] ?? 'civil'}
+	summary={{ bg: post.data.summary, en: en?.data.summary ?? post.data.summary }}
+	date={post.data.date}
+	readingTime={readingTime(post.body)}
+	demo={post.data.demo}
+	hasEn={Boolean(EnContent)}
+>
+	<Content />
+	{EnContent && <EnContent slot="en" />}
+</ArticleLayout>

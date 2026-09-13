@@ -1,0 +1,32 @@
+---
+/**
+ * Стъпка 2 – календар по месеци. Клетките с дните се генерират в src/scripts/booking.ts,
+ * защото зависят от текущата дата, часовата зона и минималното предизвестие.
+ */
+import ChevronLeft from '@lucide/astro/icons/chevron-left';
+import ChevronRight from '@lucide/astro/icons/chevron-right';
+import { t, tList, i18n, i18nAttr } from '../../i18n';
+import { BOOKING_CONFIG } from '../../config/booking';
+
+const weekdays = tList('booking.weekdays');
+---
+
+<div class="bk-calendar" data-calendar>
+	<div class="bk-calendar__head">
+		<button type="button" class="bk-calendar__nav" data-calendar-prev {...i18nAttr({ 'aria-label': 'booking.prevMonth' })}>
+			<ChevronLeft size={20} stroke-width={1.7} aria-hidden="true" />
+		</button>
+		<h4 class="bk-calendar__month" data-calendar-month aria-live="polite"></h4>
+		<button type="button" class="bk-calendar__nav" data-calendar-next {...i18nAttr({ 'aria-label': 'booking.nextMonth' })}>
+			<ChevronRight size={20} stroke-width={1.7} aria-hidden="true" />
+		</button>
+	</div>
+	<div class="bk-calendar__weekdays" aria-hidden="true" data-calendar-weekdays>
+		{weekdays.map((d) => <span>{d}</span>)}
+	</div>
+	<div class="bk-calendar__grid" data-calendar-grid role="group" {...i18nAttr({ 'aria-label': 'booking.pickDate' })}></div>
+	<p class="bk-calendar__legend">
+		<span class="bk-calendar__legend-dot" aria-hidden="true"></span>
+		<span {...i18n('booking.legend', { n: BOOKING_CONFIG.minimumNoticeHours })}>{t('booking.legend', { n: BOOKING_CONFIG.minimumNoticeHours })}</span>
+	</p>
+</div>

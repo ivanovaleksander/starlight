@@ -1,0 +1,722 @@
+/* =====================================================================
+   Резервиране на консултация (.bk-*) – глобални стилове, защото част от
+   елементите (дни, часове) се генерират в браузъра и scoped стилове не ги покриват.
+   Токени по спецификацията на секцията + съществуващата система.
+   ===================================================================== */
+.bk {
+	--bk-navy: #0b192c;
+	--bk-gold: #cda65f;
+	--bk-gold-deep: #7a5c30; /* текст върху светъл фон (контраст ≥ 4.5:1) */
+	--bk-paper: #f8f5ef;
+	--bk-paper-2: #f1ede5;
+	--bk-line: #d8d5cf;
+	--bk-ink: #0b192c;
+	--bk-ink-2: #3a4556;
+	--bk-ink-3: #5b6778;
+	--bk-radius: 14px;
+	--bk-radius-sm: 12px;
+	--bk-focus: 0 0 0 3px rgba(205, 166, 95, 0.45);
+
+	container-type: inline-size;
+	color: var(--bk-ink);
+	display: grid;
+	gap: 1.5rem;
+}
+
+.bk__title {
+	font-size: var(--text-h3);
+}
+.bk__sub {
+	margin-top: 0.35rem;
+	color: var(--bk-ink-2);
+}
+.bk__form {
+	display: grid;
+}
+.bk__panel {
+	display: grid;
+	gap: 1.25rem;
+	animation: fade-up var(--dur) var(--ease-out);
+}
+.bk__panel[hidden] {
+	display: none;
+}
+.bk__step-title {
+	font-family: var(--font-sans);
+	font-size: var(--text-xs);
+	font-weight: 600;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+	color: var(--bk-gold-deep);
+	outline: none;
+}
+.bk__step-title:focus-visible {
+	text-decoration: underline;
+	text-underline-offset: 0.25em;
+}
+.bk__actions {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 1rem;
+	flex-wrap: wrap;
+	padding-top: 0.25rem;
+}
+.bk__status {
+	font-size: var(--text-sm);
+	color: var(--bk-ink-2);
+	min-height: 1.2em;
+}
+.bk__status:empty {
+	display: none;
+}
+.bk__disclaimer {
+	font-size: var(--text-xs);
+	color: var(--bk-ink-3);
+	padding-top: 0.75rem;
+	border-top: 1px solid var(--bk-line);
+}
+
+/* ---------- Бутони ---------- */
+.bk-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.5rem;
+	padding: 0.85rem 1.4rem;
+	border-radius: 999px;
+	font-weight: 600;
+	font-size: var(--text-sm);
+	line-height: 1;
+	border: 1px solid transparent;
+	transition:
+		background-color var(--dur-fast) var(--ease-out),
+		border-color var(--dur-fast) var(--ease-out),
+		color var(--dur-fast) var(--ease-out);
+}
+.bk-btn:focus-visible {
+	outline: none;
+	box-shadow: var(--bk-focus);
+}
+.bk-btn--primary {
+	background: var(--bk-gold);
+	color: var(--bk-navy);
+	border-color: var(--bk-gold);
+}
+.bk-btn--primary:hover:not([disabled]) {
+	background: var(--bk-navy);
+	border-color: var(--bk-navy);
+	color: #fff;
+}
+.bk-btn--ghost {
+	background: transparent;
+	color: var(--bk-ink);
+	border-color: var(--bk-line);
+}
+.bk-btn--ghost:hover:not([disabled]) {
+	border-color: var(--bk-navy);
+}
+.bk-btn[disabled] {
+	opacity: 0.45;
+	cursor: not-allowed;
+}
+.bk-link {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.35rem;
+	margin-top: 0.75rem;
+	font-size: var(--text-sm);
+	font-weight: 600;
+	color: var(--bk-gold-deep);
+	text-decoration: underline;
+	text-underline-offset: 0.2em;
+}
+.bk-link:focus-visible {
+	outline: none;
+	box-shadow: var(--bk-focus);
+	border-radius: 4px;
+}
+
+/* ---------- Стъпка 1: карти ---------- */
+.bk-services {
+	border: 0;
+	padding: 0;
+	margin: 0;
+	min-width: 0;
+}
+.bk-services__grid {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 0.75rem;
+}
+/* Tablet: две карти в ред; desktop (широк екран + достатъчно широка колона): четири. */
+@container (min-width: 22rem) {
+	.bk-services__grid {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}
+@media (min-width: 64rem) {
+	@container (min-width: 33rem) {
+		.bk-services__grid {
+			grid-template-columns: repeat(4, minmax(0, 1fr));
+		}
+	}
+}
+.bk-service {
+	position: relative;
+	display: block;
+	cursor: pointer;
+}
+.bk-service__input {
+	position: absolute;
+	opacity: 0;
+	width: 1px;
+	height: 1px;
+	margin: 0;
+}
+.bk-service__card {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	text-align: center;
+	gap: 0.35rem;
+	min-height: 100%;
+	padding: 1.15rem 0.5rem 1rem;
+	background: #fff;
+	border: 1px solid var(--bk-line);
+	border-radius: var(--bk-radius);
+	color: var(--bk-ink);
+	transition:
+		background-color var(--dur-fast) var(--ease-out),
+		border-color var(--dur-fast) var(--ease-out),
+		color var(--dur-fast) var(--ease-out),
+		transform var(--dur-fast) var(--ease-out);
+}
+.bk-service__icon {
+	margin-bottom: 0.35rem;
+	color: var(--bk-navy);
+	transition: color var(--dur-fast) var(--ease-out);
+}
+.bk-service__name {
+	font-weight: 600;
+	font-size: var(--text-sm);
+	line-height: 1.3;
+}
+.bk-service__hint {
+	font-size: var(--text-xs);
+	color: var(--bk-ink-3);
+	transition: color var(--dur-fast) var(--ease-out);
+}
+.bk-service:hover .bk-service__card {
+	border-color: var(--bk-navy);
+	transform: translateY(-2px);
+}
+.bk-service__input:focus-visible + .bk-service__card {
+	box-shadow: var(--bk-focus);
+	border-color: var(--bk-gold);
+}
+.bk-service__input:checked + .bk-service__card {
+	background: var(--bk-navy);
+	border-color: var(--bk-gold);
+	color: #fff;
+}
+.bk-service__input:checked + .bk-service__card .bk-service__icon {
+	color: var(--bk-gold);
+}
+.bk-service__input:checked + .bk-service__card .bk-service__hint {
+	color: rgba(255, 255, 255, 0.72);
+}
+
+/* ---------- Стъпка 2: календар и часове ---------- */
+.bk__schedule {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 1rem;
+}
+@container (min-width: 33rem) {
+	.bk__schedule {
+		grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+		align-items: start;
+	}
+}
+.bk-calendar,
+.bk-times {
+	background: #fff;
+	border: 1px solid var(--bk-line);
+	border-radius: var(--bk-radius);
+	padding: 1rem;
+}
+.bk-calendar__head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.5rem;
+	margin-bottom: 0.75rem;
+}
+.bk-calendar__month {
+	font-family: var(--font-sans);
+	font-size: var(--text-base);
+	font-weight: 600;
+}
+.bk-calendar__nav {
+	display: grid;
+	place-items: center;
+	width: 2.25rem;
+	height: 2.25rem;
+	border-radius: 999px;
+	border: 1px solid transparent;
+	color: var(--bk-ink);
+	transition: border-color var(--dur-fast) var(--ease-out);
+}
+.bk-calendar__nav:hover:not([disabled]) {
+	border-color: var(--bk-line);
+}
+.bk-calendar__nav:focus-visible {
+	outline: none;
+	box-shadow: var(--bk-focus);
+}
+.bk-calendar__nav[disabled] {
+	opacity: 0.3;
+	cursor: not-allowed;
+}
+.bk-calendar__weekdays,
+.bk-calendar__grid {
+	display: grid;
+	grid-template-columns: repeat(7, minmax(0, 1fr));
+	gap: 0.2rem;
+}
+.bk-calendar__weekdays span {
+	text-align: center;
+	font-size: var(--text-xs);
+	color: var(--bk-ink-3);
+	padding-bottom: 0.35rem;
+}
+.bk-day {
+	position: relative;
+	aspect-ratio: 1;
+	display: grid;
+	place-items: center;
+	border-radius: 999px;
+	font-size: var(--text-sm);
+	font-variant-numeric: tabular-nums;
+	color: var(--bk-ink);
+	border: 1px solid transparent;
+	transition:
+		background-color var(--dur-fast) var(--ease-out),
+		border-color var(--dur-fast) var(--ease-out),
+		color var(--dur-fast) var(--ease-out);
+}
+.bk-day:hover:not([disabled]) {
+	background: var(--bk-paper-2);
+}
+.bk-day:focus-visible {
+	outline: none;
+	box-shadow: var(--bk-focus);
+}
+.bk-day[disabled] {
+	color: var(--bk-ink-3);
+	opacity: 0.45;
+	cursor: not-allowed;
+}
+.bk-day--outside {
+	opacity: 0.25;
+}
+.bk-day--today::after {
+	content: '';
+	position: absolute;
+	bottom: 0.3rem;
+	width: 4px;
+	height: 4px;
+	border-radius: 50%;
+	background: var(--bk-gold);
+}
+.bk-day[aria-pressed='true'] {
+	background: var(--bk-navy);
+	border-color: var(--bk-gold);
+	color: #fff;
+}
+.bk-calendar__legend {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	margin-top: 0.75rem;
+	font-size: var(--text-xs);
+	color: var(--bk-ink-3);
+}
+.bk-calendar__legend-dot {
+	width: 6px;
+	height: 6px;
+	border-radius: 50%;
+	background: var(--bk-gold);
+}
+
+.bk-times__head {
+	margin-bottom: 0.75rem;
+}
+.bk-times__title {
+	font-family: var(--font-sans);
+	font-size: var(--text-base);
+	font-weight: 600;
+}
+.bk-times__sub {
+	font-size: var(--text-xs);
+	color: var(--bk-ink-3);
+	margin-top: 0.15rem;
+}
+.bk-times__state[hidden] {
+	display: none;
+}
+.bk-times__muted {
+	font-size: var(--text-sm);
+	color: var(--bk-ink-2);
+	line-height: 1.55;
+}
+.bk-times__loading {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+.bk-spin {
+	animation: bk-spin 0.9s linear infinite;
+}
+@keyframes bk-spin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+.bk-times__list {
+	display: grid;
+	gap: 0.5rem;
+	max-height: 18rem;
+	overflow-y: auto;
+	padding-right: 0.15rem;
+}
+.bk-slot {
+	position: relative;
+	display: block;
+	cursor: pointer;
+}
+.bk-slot__input {
+	position: absolute;
+	opacity: 0;
+	width: 1px;
+	height: 1px;
+	margin: 0;
+}
+.bk-slot__label {
+	display: block;
+	text-align: center;
+	padding: 0.65rem 0.75rem;
+	border: 1px solid var(--bk-line);
+	border-radius: var(--bk-radius-sm);
+	font-size: var(--text-sm);
+	font-weight: 600;
+	font-variant-numeric: tabular-nums;
+	transition:
+		background-color var(--dur-fast) var(--ease-out),
+		border-color var(--dur-fast) var(--ease-out),
+		color var(--dur-fast) var(--ease-out);
+}
+.bk-slot:hover .bk-slot__label {
+	border-color: var(--bk-navy);
+}
+.bk-slot__input:focus-visible + .bk-slot__label {
+	box-shadow: var(--bk-focus);
+	border-color: var(--bk-gold);
+}
+.bk-slot__input:checked + .bk-slot__label {
+	background: var(--bk-navy);
+	border-color: var(--bk-gold);
+	color: #fff;
+}
+.bk-times__demo,
+.bk-times__notice,
+.bk-times__error {
+	display: flex;
+	gap: 0.5rem;
+	align-items: flex-start;
+	margin-top: 0.75rem;
+	font-size: var(--text-xs);
+	line-height: 1.5;
+	color: var(--bk-ink-3);
+}
+.bk-times__demo svg,
+.bk-times__notice svg,
+.bk-times__error svg {
+	flex: none;
+	margin-top: 0.1rem;
+}
+.bk-times__error {
+	font-size: var(--text-sm);
+	color: #8f2a1f;
+}
+
+/* ---------- Стъпка 3: обобщение и форма ---------- */
+.bk-summary {
+	display: grid;
+	gap: 0.5rem 1.5rem;
+	margin: 0;
+	padding: 0.85rem 1rem;
+	background: var(--bk-paper-2);
+	border: 1px solid var(--bk-line);
+	border-radius: var(--bk-radius-sm);
+	font-size: var(--text-sm);
+}
+@container (min-width: 30rem) {
+	.bk-summary {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}
+.bk-summary > div {
+	display: grid;
+	gap: 0.1rem;
+}
+.bk-summary dt {
+	font-size: var(--text-xs);
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	color: var(--bk-ink-3);
+}
+.bk-summary dd {
+	margin: 0;
+	font-weight: 600;
+}
+.bk-summary [hidden] {
+	display: none;
+}
+
+.bk-form {
+	display: grid;
+	gap: 1.1rem;
+}
+.bk-form__row {
+	display: grid;
+	gap: 1.1rem;
+}
+@container (min-width: 30rem) {
+	.bk-form__row {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}
+.bk-field {
+	display: grid;
+	gap: 0.35rem;
+}
+.bk-field label {
+	font-size: var(--text-sm);
+	font-weight: 600;
+}
+.bk-field label span[aria-hidden] {
+	color: var(--bk-gold-deep);
+}
+.bk-field input,
+.bk-field select,
+.bk-field textarea {
+	width: 100%;
+	padding: 0.75rem 0.9rem;
+	background: #fff;
+	border: 1px solid var(--bk-line);
+	border-radius: var(--bk-radius-sm);
+	transition:
+		border-color var(--dur-fast) var(--ease-out),
+		box-shadow var(--dur-fast) var(--ease-out);
+}
+.bk-field textarea {
+	resize: vertical;
+	min-height: 6.5rem;
+}
+.bk-field input:focus,
+.bk-field select:focus,
+.bk-field textarea:focus {
+	outline: none;
+	border-color: var(--bk-gold);
+	box-shadow: var(--bk-focus);
+}
+.bk-field [aria-invalid='true'] {
+	border-color: #a83a2c;
+}
+.bk-field__warn {
+	display: flex;
+	gap: 0.4rem;
+	align-items: flex-start;
+	font-size: var(--text-xs);
+	color: var(--bk-ink-3);
+	line-height: 1.5;
+}
+.bk-field__warn svg {
+	flex: none;
+	margin-top: 0.1rem;
+	color: var(--bk-gold-deep);
+}
+.bk-field__error {
+	font-size: var(--text-xs);
+	color: #9a2f22;
+}
+.bk-field__error:empty {
+	display: none;
+}
+.bk-field--check {
+	grid-template-columns: auto 1fr;
+	align-items: start;
+	gap: 0.65rem;
+}
+.bk-field--check label {
+	font-weight: 400;
+	font-size: var(--text-sm);
+	line-height: 1.5;
+}
+.bk-field--check input {
+	width: 1.15rem;
+	height: 1.15rem;
+	margin-top: 0.2rem;
+	accent-color: var(--bk-navy);
+}
+.bk-field--check .bk-field__error {
+	grid-column: 1 / -1;
+}
+.bk-hp {
+	position: absolute;
+	left: -10000px;
+	top: auto;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+}
+.bk__form.is-submitting {
+	opacity: 0.7;
+	pointer-events: none;
+}
+
+/* ---------- Успех / грешка ---------- */
+.bk__done {
+	display: grid;
+	gap: 0.75rem;
+	justify-items: start;
+	animation: fade-up var(--dur-slow) var(--ease-out);
+}
+.bk__done[hidden] {
+	display: none;
+}
+.bk__done svg:first-child {
+	color: var(--bk-gold-deep);
+}
+.bk__done h4 {
+	font-size: var(--text-h3);
+}
+.bk__done p {
+	color: var(--bk-ink-2);
+}
+.bk__failure {
+	display: flex;
+	gap: 0.75rem;
+	align-items: flex-start;
+	padding: 1rem;
+	border: 1px solid #c9564a;
+	border-radius: var(--bk-radius-sm);
+	background: #fbeceb;
+	color: #7f2419;
+	font-size: var(--text-sm);
+}
+.bk__failure[hidden] {
+	display: none;
+}
+.bk__failure svg {
+	flex: none;
+}
+
+/* ---------- Индикатор на стъпките ---------- */
+.bk-progress {
+	display: grid;
+	gap: 0.6rem;
+	padding-top: 1.25rem;
+	border-top: 1px solid var(--bk-line);
+}
+@container (min-width: 30rem) {
+	.bk-progress {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 0.75rem;
+	}
+	.bk-progress__step:not(:last-child)::after {
+		content: '';
+		flex: 1;
+		height: 1px;
+		background: var(--bk-line);
+		margin-left: 0.75rem;
+	}
+}
+.bk-progress__step {
+	display: flex;
+	align-items: center;
+	gap: 0.6rem;
+	font-size: var(--text-sm);
+	color: var(--bk-ink-3);
+}
+.bk-progress__num {
+	position: relative;
+	flex: none;
+	display: grid;
+	place-items: center;
+	width: 2rem;
+	height: 2rem;
+	border-radius: 999px;
+	border: 1px solid var(--bk-line);
+	font-size: var(--text-xs);
+	font-weight: 600;
+	color: var(--bk-ink-2);
+	transition:
+		background-color var(--dur-fast) var(--ease-out),
+		border-color var(--dur-fast) var(--ease-out),
+		color var(--dur-fast) var(--ease-out);
+}
+.bk-progress__check {
+	display: none;
+}
+.bk-progress__label {
+	display: grid;
+	line-height: 1.2;
+}
+.bk-progress__note {
+	font-size: var(--text-xs);
+	color: var(--bk-ink-3);
+}
+.bk-progress__note:empty {
+	display: none;
+}
+.bk-progress__step[data-state='current'] {
+	color: var(--bk-ink);
+	font-weight: 600;
+}
+.bk-progress__step[data-state='current'] .bk-progress__num {
+	background: var(--bk-navy);
+	border-color: var(--bk-navy);
+	color: #fff;
+}
+.bk-progress__step[data-state='done'] .bk-progress__num {
+	background: var(--bk-gold);
+	border-color: var(--bk-gold);
+	color: var(--bk-navy);
+}
+.bk-progress__step[data-state='done'] .bk-progress__n,
+.bk-progress__step[data-state='skipped'] .bk-progress__n {
+	display: none;
+}
+.bk-progress__step[data-state='done'] .bk-progress__check {
+	display: block;
+}
+.bk-progress__step[data-state='skipped'] .bk-progress__num::before {
+	content: '–';
+}
+.bk-progress__step[data-state='skipped'] {
+	opacity: 0.6;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.bk__panel,
+	.bk__done,
+	.bk-spin {
+		animation: none;
+	}
+	.bk-service:hover .bk-service__card {
+		transform: none;
+	}
+}

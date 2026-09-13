@@ -1,0 +1,145 @@
+---
+/**
+ * Основен бутон/връзка с ясни състояния (hover, focus, active).
+ * variant: primary (бронзов), ghost (контур), link (текст със стрелка)
+ */
+import ArrowRight from '@lucide/astro/icons/arrow-right';
+
+interface Props {
+	href?: string;
+	variant?: 'primary' | 'ghost' | 'link';
+	type?: 'button' | 'submit';
+	class?: string;
+	arrow?: boolean;
+	[key: string]: unknown;
+}
+const {
+	href,
+	variant = 'primary',
+	type = 'button',
+	class: className = '',
+	arrow = variant === 'link',
+	'data-i18n': i18nKey,
+	...rest
+} = Astro.props;
+const Tag = href ? 'a' : 'button';
+---
+
+<Tag
+	href={href}
+	type={href ? undefined : type}
+	class:list={['btn', `btn--${variant}`, className]}
+	{...rest}
+>
+	<span class="btn__label" data-i18n={i18nKey}><slot /></span>
+	{arrow && <ArrowRight class="btn__icon" size={18} aria-hidden="true" />}
+</Tag>
+
+<style>
+	.btn {
+		--btn-bg: var(--bronze);
+		--btn-fg: var(--navy-950);
+		position: relative;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: 0.6rem;
+		min-height: 2.75rem;
+		padding: 0.95rem 1.6rem;
+		border-radius: 999px;
+		font-weight: 600;
+		font-size: var(--text-sm);
+		letter-spacing: 0.02em;
+		line-height: 1;
+		white-space: nowrap;
+		isolation: isolate;
+		overflow: hidden;
+		transition:
+			color var(--dur) var(--ease-out),
+			border-color var(--dur) var(--ease-out),
+			transform var(--dur-fast) var(--ease-out),
+			box-shadow var(--dur) var(--ease-out);
+	}
+	.btn:active {
+		transform: translateY(1px);
+	}
+	.btn__icon {
+		flex: none;
+		transition: transform var(--dur) var(--ease-out);
+	}
+	.btn:hover .btn__icon,
+	.btn:focus-visible .btn__icon {
+		transform: translateX(4px);
+	}
+
+	/* primary */
+	.btn--primary {
+		background: var(--btn-bg);
+		color: var(--btn-fg);
+		border: 1px solid var(--btn-bg);
+	}
+	.btn--primary::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		z-index: -1;
+		background: var(--cream);
+		transform: translateY(101%);
+		transition: transform var(--dur) var(--ease-out);
+	}
+	.btn--primary:hover::before,
+	.btn--primary:focus-visible::before {
+		transform: translateY(0);
+	}
+	.btn--primary:hover,
+	.btn--primary:focus-visible {
+		border-color: var(--cream);
+		box-shadow: 0 10px 30px -12px rgba(201, 166, 107, 0.6);
+	}
+
+	/* ghost */
+	.btn--ghost {
+		background: transparent;
+		color: var(--fg);
+		border: 1px solid var(--line-strong);
+	}
+	.btn--ghost:hover,
+	.btn--ghost:focus-visible {
+		border-color: var(--accent);
+		color: var(--accent);
+	}
+
+	/* link */
+	.btn--link {
+		padding: 0.25rem 0;
+		border-radius: 0;
+		color: var(--accent);
+		font-size: var(--text-sm);
+	}
+	.btn--link .btn__label {
+		position: relative;
+	}
+	.btn--link .btn__label::after {
+		content: '';
+		position: absolute;
+		left: 0;
+		bottom: -3px;
+		width: 100%;
+		height: 1px;
+		background: currentColor;
+		transform: scaleX(0.35);
+		transform-origin: left;
+		transition: transform var(--dur) var(--ease-out);
+	}
+	.btn--link:hover .btn__label::after,
+	.btn--link:focus-visible .btn__label::after {
+		transform: scaleX(1);
+	}
+
+	.btn[disabled],
+	.btn[aria-disabled='true'] {
+		opacity: 0.6;
+		cursor: not-allowed;
+		pointer-events: none;
+	}
+</style>

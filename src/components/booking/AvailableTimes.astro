@@ -1,0 +1,71 @@
+---
+/**
+ * Стъпка 2 – панел „Свободни часове“. Има няколко състояния, които скриптът превключва:
+ * idle (няма избрана дата), loading, list (реални часове от API), empty, error,
+ * external (няма API – часът се избира/потвърждава в Microsoft Bookings), demo (само dev).
+ */
+import LoaderCircle from '@lucide/astro/icons/loader-circle';
+import CircleAlert from '@lucide/astro/icons/circle-alert';
+import ExternalLink from '@lucide/astro/icons/external-link';
+import Info from '@lucide/astro/icons/info';
+import { BOOKING_CONFIG } from '../../config/booking';
+import { t, i18n, i18nAttr } from '../../i18n';
+---
+
+<div class="bk-times" data-times>
+	<div class="bk-times__head">
+		<h4 class="bk-times__title" {...i18n('booking.timesTitle')}>{t('booking.timesTitle')}</h4>
+		<p class="bk-times__sub" data-times-sub {...i18n('booking.timesPickDate')}>{t('booking.timesPickDate')}</p>
+	</div>
+
+	<div data-times-state="idle" class="bk-times__state">
+		<p class="bk-times__muted" {...i18n('booking.timesIdle')}>{t('booking.timesIdle')}</p>
+	</div>
+
+	<div data-times-state="loading" class="bk-times__state" hidden>
+		<p class="bk-times__muted bk-times__loading">
+			<LoaderCircle size={18} stroke-width={1.7} aria-hidden="true" class="bk-spin" />
+			<span {...i18n('booking.timesLoading')}>{t('booking.timesLoading')}</span>
+		</p>
+	</div>
+
+	<div data-times-state="list" class="bk-times__state" hidden>
+		<div class="bk-times__list" data-times-list role="radiogroup" {...i18nAttr({ 'aria-label': 'booking.timesAria' })}></div>
+		<p class="bk-times__demo" data-times-demo hidden>
+			<Info size={16} aria-hidden="true" />
+			<span {...i18n('booking.timesDemo')}>{t('booking.timesDemo')}</span>
+		</p>
+	</div>
+
+	<div data-times-state="empty" class="bk-times__state" hidden>
+		<p class="bk-times__muted" {...i18n('booking.timesEmpty')}>{t('booking.timesEmpty')}</p>
+	</div>
+
+	<div data-times-state="error" class="bk-times__state" hidden>
+		<p class="bk-times__error" role="alert">
+			<CircleAlert size={18} aria-hidden="true" />
+			<span {...i18n('booking.timesError')}>{t('booking.timesError')}</span>
+		</p>
+	</div>
+
+	<div data-times-state="external" class="bk-times__state" hidden>
+		<p class="bk-times__muted" {...i18n('booking.timesExternal')}>{t('booking.timesExternal')}</p>
+		{
+			BOOKING_CONFIG.bookingPageUrl ? (
+				<a
+					class="bk-link"
+					href={BOOKING_CONFIG.bookingPageUrl}
+					target="_blank"
+					rel="noopener noreferrer"
+				>
+					<span {...i18n('booking.openBookings')}>{t('booking.openBookings')}</span> <ExternalLink size={15} aria-hidden="true" />
+				</a>
+			) : (
+				<p class="bk-times__notice">
+					<Info size={16} aria-hidden="true" />
+					<span {...i18n('booking.noBookingsUrl')}>{t('booking.noBookingsUrl')}</span>
+				</p>
+			)
+		}
+	</div>
+</div>

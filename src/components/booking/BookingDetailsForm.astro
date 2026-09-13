@@ -1,0 +1,68 @@
+---
+/**
+ * Стъпка 3 – данни на клиента. Валидирането и изпращането са в src/scripts/booking.ts.
+ * Полето „Тема“ запазва id="f-topic", за да работи предварителният избор от секция „Услуги“.
+ */
+import ShieldAlert from '@lucide/astro/icons/shield-alert';
+import { services } from '../../data/site';
+import { t, i18n, i18nHtml } from '../../i18n';
+
+/** Темите са ключовете на услугите + „Друго“; стойността е ключът (езиково независим). */
+const topics = [...services.map((s) => ({ value: s.key, key: `services.items.${s.key}.title` })), { value: 'other', key: 'services.other' }];
+---
+
+<div class="bk-form">
+	<div class="bk-form__row">
+		<div class="bk-field">
+			<label for="f-name"><span {...i18n('booking.fName')}>{t('booking.fName')}</span> <span aria-hidden="true">*</span></label>
+			<input id="f-name" name="name" type="text" autocomplete="name" required minlength="2" aria-describedby="f-name-err" />
+			<p class="bk-field__error" id="f-name-err" role="alert"></p>
+		</div>
+		<div class="bk-field">
+			<label for="f-email"><span {...i18n('booking.fEmail')}>{t('booking.fEmail')}</span> <span aria-hidden="true">*</span></label>
+			<input id="f-email" name="email" type="email" autocomplete="email" required aria-describedby="f-email-err" />
+			<p class="bk-field__error" id="f-email-err" role="alert"></p>
+		</div>
+	</div>
+
+	<div class="bk-form__row">
+		<div class="bk-field">
+			<label for="f-phone"><span {...i18n('booking.fPhone')}>{t('booking.fPhone')}</span> <span aria-hidden="true">*</span></label>
+			<input id="f-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" required aria-describedby="f-phone-err" />
+			<p class="bk-field__error" id="f-phone-err" role="alert"></p>
+		</div>
+		<div class="bk-field">
+			<label for="f-topic"><span {...i18n('booking.fTopic')}>{t('booking.fTopic')}</span> <span aria-hidden="true">*</span></label>
+			<select id="f-topic" name="topic" required aria-describedby="f-topic-err">
+				<option value="" {...i18n('booking.fTopicPlaceholder')}>{t('booking.fTopicPlaceholder')}</option>
+				{topics.map((o) => <option value={o.value} {...i18n(o.key)}>{t(o.key)}</option>)}
+			</select>
+			<p class="bk-field__error" id="f-topic-err" role="alert"></p>
+		</div>
+	</div>
+
+	<div class="bk-field">
+		<label for="f-message"><span {...i18n('booking.fMessage')}>{t('booking.fMessage')}</span> <span aria-hidden="true">*</span></label>
+		<textarea id="f-message" name="message" rows="4" required minlength="20" maxlength="2000" aria-describedby="f-message-err f-message-warn"></textarea>
+		<p class="bk-field__warn" id="f-message-warn">
+			<ShieldAlert size={16} stroke-width={1.7} aria-hidden="true" />
+			<span {...i18n('booking.fWarn')}>{t('booking.fWarn')}</span>
+		</p>
+		<p class="bk-field__error" id="f-message-err" role="alert"></p>
+	</div>
+
+	<div class="bk-field bk-field--check">
+		<input id="f-consent" name="consent" type="checkbox" required aria-describedby="f-consent-err" />
+		<label for="f-consent">
+			<span {...i18nHtml('booking.fConsent')} set:html={t('booking.fConsent')} />
+			<span aria-hidden="true">*</span>
+		</label>
+		<p class="bk-field__error" id="f-consent-err" role="alert"></p>
+	</div>
+
+	<!-- Honeypot срещу спам ботове -->
+	<div class="bk-hp" aria-hidden="true">
+		<label for="f-website" {...i18n('booking.fWebsite')}>{t('booking.fWebsite')}</label>
+		<input id="f-website" name="website" type="text" tabindex="-1" autocomplete="off" />
+	</div>
+</div>

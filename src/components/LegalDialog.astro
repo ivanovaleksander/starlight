@@ -1,0 +1,298 @@
+---
+/**
+ * Модален прозорец за преглед на правните документи, без напускане на страницата.
+ * Отваря се от връзките с data-legal-open="<key>" (footer, контактна форма).
+ * Използва нативния <dialog>: Escape затваря, фокусът остава вътре.
+ * Всеки документ има и самостоятелна страница (href) – за директни връзки и без JavaScript.
+ * Двуезичен: и двете версии на всеки документ се рендират, показва се активният език.
+ */
+import X from '@lucide/astro/icons/x';
+import ArrowUpRight from '@lucide/astro/icons/arrow-up-right';
+import Logo from './Logo.astro';
+import PrivacyPolicy from './legal/PrivacyPolicy.astro';
+import CookiePolicy from './legal/CookiePolicy.astro';
+import LegalNotice from './legal/LegalNotice.astro';
+import AccessibilityStatement from './legal/AccessibilityStatement.astro';
+import PrivacyPolicyEn from './legal/en/PrivacyPolicy.astro';
+import CookiePolicyEn from './legal/en/CookiePolicy.astro';
+import LegalNoticeEn from './legal/en/LegalNotice.astro';
+import AccessibilityStatementEn from './legal/en/AccessibilityStatement.astro';
+import { legalList } from '../data/site';
+import { t, i18n, i18nHtml, i18nAttr } from '../i18n';
+
+const bodies = {
+	privacy: { bg: PrivacyPolicy, en: PrivacyPolicyEn },
+	cookies: { bg: CookiePolicy, en: CookiePolicyEn },
+	legal: { bg: LegalNotice, en: LegalNoticeEn },
+	accessibility: { bg: AccessibilityStatement, en: AccessibilityStatementEn },
+};
+---
+
+<dialog class="ldlg theme-light" data-legal-dialog aria-labelledby="ldlg-title">
+	<div class="ldlg__frame">
+		<header class="ldlg__head">
+			<div class="ldlg__head-main">
+				<Logo size={36} class="ldlg__mark" />
+				<div>
+					<p class="eyebrow" {...i18n('legal.eyebrow')}>{t('legal.eyebrow')}</p>
+					<h2 id="ldlg-title" class="ldlg__title" data-legal-title>{t('legal.dialogTitle')}</h2>
+				</div>
+			</div>
+			<button type="button" class="ldlg__close" data-legal-close {...i18nAttr({ 'aria-label': 'legal.closeAria' })}>
+				<X size={22} aria-hidden="true" />
+			</button>
+		</header>
+
+		<nav class="ldlg__nav" {...i18nAttr({ 'aria-label': 'legal.dialogNav' })}>
+			<ul>
+				{
+					legalList.map((d) => (
+						<li>
+							<button type="button" class="ldlg__tab" data-legal-tab={d.key} aria-pressed="false" {...i18n(`legal.docs.${d.key}.title`)}>
+								{t(`legal.docs.${d.key}.title`)}
+							</button>
+						</li>
+					))
+				}
+			</ul>
+		</nav>
+
+		<div class="ldlg__scroll" data-legal-scroll tabindex="0">
+			{
+				legalList.map((d) => {
+					const Bg = bodies[d.key].bg;
+					const En = bodies[d.key].en;
+					return (
+						<article class="ldlg__doc" data-legal-doc={d.key} hidden>
+							<p class="ldlg__basis" {...i18n(`legal.docs.${d.key}.basis`)}>{t(`legal.docs.${d.key}.basis`)}</p>
+							<p class="ldlg__notice" {...i18nHtml('legal.draftShort')} set:html={t('legal.draftShort')} />
+							<div class="prose" data-lang="bg" lang="bg">
+								<Bg />
+							</div>
+							<div class="prose" data-lang="en" lang="en">
+								<En />
+							</div>
+						</article>
+					);
+				})
+			}
+		</div>
+
+		<footer class="ldlg__foot">
+			<a href="/pravna-informacia" class="ldlg__page-link" data-legal-page-link>
+				<span {...i18n('legal.openPage')}>{t('legal.openPage')}</span> <ArrowUpRight size={16} aria-hidden="true" />
+			</a>
+			<button type="button" class="ldlg__done" data-legal-close {...i18n('legal.close')}>{t('legal.close')}</button>
+		</footer>
+	</div>
+</dialog>
+
+<style>
+	.ldlg {
+		--ldlg-pad: clamp(1.25rem, 3vw, 2.25rem);
+		width: min(100% - 2rem, 58rem);
+		max-height: min(100svh - 2rem, 54rem);
+		margin: auto;
+		padding: 0;
+		border: 0;
+		border-radius: var(--radius-lg);
+		background: var(--paper);
+		color: var(--ink);
+		box-shadow: 0 50px 100px -30px rgba(0, 0, 0, 0.6);
+		overflow: hidden;
+	}
+	.ldlg::backdrop {
+		background: rgba(7, 13, 24, 0.72);
+		-webkit-backdrop-filter: blur(6px);
+		backdrop-filter: blur(6px);
+	}
+	.ldlg[open] {
+		animation: ldlg-in var(--dur) var(--ease-out);
+	}
+	.ldlg[open]::backdrop {
+		animation: ldlg-fade var(--dur) var(--ease-out);
+	}
+	@keyframes ldlg-in {
+		from {
+			opacity: 0;
+			transform: translateY(16px) scale(0.985);
+		}
+	}
+	@keyframes ldlg-fade {
+		from {
+			opacity: 0;
+		}
+	}
+
+	.ldlg__frame {
+		display: grid;
+		grid-template-rows: auto auto minmax(0, 1fr) auto;
+		max-height: inherit;
+		height: min(100svh - 2rem, 54rem);
+	}
+
+	.ldlg__head {
+		display: flex;
+		justify-content: space-between;
+		align-items: flex-start;
+		gap: 1.5rem;
+		padding: var(--ldlg-pad) var(--ldlg-pad) 1rem;
+	}
+	.ldlg__head-main {
+		display: flex;
+		gap: 1rem;
+		align-items: flex-start;
+	}
+	.ldlg__mark {
+		flex: none;
+		color: var(--bronze-deep);
+		margin-top: 0.15rem;
+	}
+	.ldlg__title {
+		font-size: clamp(1.5rem, 1.6vw + 0.9rem, 2.1rem);
+		margin-top: 0.6rem;
+	}
+	.ldlg__close {
+		flex: none;
+		display: grid;
+		place-items: center;
+		width: 2.75rem;
+		height: 2.75rem;
+		border: 1px solid var(--line-strong);
+		border-radius: 999px;
+		color: var(--ink);
+		transition:
+			border-color var(--dur-fast) var(--ease-out),
+			color var(--dur-fast) var(--ease-out),
+			transform var(--dur-fast) var(--ease-out);
+	}
+	.ldlg__close:hover,
+	.ldlg__close:focus-visible {
+		border-color: var(--bronze-deep);
+		color: var(--bronze-deep);
+		transform: rotate(90deg);
+	}
+
+	.ldlg__nav {
+		padding: 0 var(--ldlg-pad);
+		border-bottom: 1px solid var(--line);
+		overflow-x: auto;
+		scrollbar-width: none;
+	}
+	.ldlg__nav::-webkit-scrollbar {
+		display: none;
+	}
+	.ldlg__nav ul {
+		display: flex;
+		gap: 1.5rem;
+		white-space: nowrap;
+	}
+	.ldlg__tab {
+		position: relative;
+		padding: 0.75rem 0 0.85rem;
+		font-size: var(--text-sm);
+		font-weight: 500;
+		color: var(--ink-3);
+		transition: color var(--dur-fast) var(--ease-out);
+	}
+	.ldlg__tab::after {
+		content: '';
+		position: absolute;
+		left: 0;
+		right: 0;
+		bottom: -1px;
+		height: 2px;
+		background: var(--bronze-deep);
+		transform: scaleX(0);
+		transform-origin: left;
+		transition: transform var(--dur) var(--ease-out);
+	}
+	.ldlg__tab:hover,
+	.ldlg__tab:focus-visible,
+	.ldlg__tab[aria-pressed='true'] {
+		color: var(--ink);
+	}
+	.ldlg__tab[aria-pressed='true'] {
+		font-weight: 600;
+	}
+	.ldlg__tab[aria-pressed='true']::after {
+		transform: scaleX(1);
+	}
+
+	.ldlg__scroll {
+		overflow-y: auto;
+		overscroll-behavior: contain;
+		padding: 1.5rem var(--ldlg-pad) 2rem;
+		scroll-behavior: smooth;
+	}
+	.ldlg__scroll:focus-visible {
+		outline-offset: -3px;
+	}
+	.ldlg__doc {
+		max-width: 46rem;
+		animation: fade-up var(--dur) var(--ease-out);
+	}
+	.ldlg__basis {
+		color: var(--ink-2);
+		font-size: var(--text-md);
+	}
+	.ldlg__notice {
+		margin: 1rem 0 1.75rem;
+		padding: 0.8rem 1rem;
+		border: 1px dashed var(--line-strong);
+		border-radius: var(--radius);
+		background: var(--paper-2);
+		font-size: var(--text-sm);
+		color: var(--ink-2);
+	}
+
+	.ldlg__foot {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-between;
+		align-items: center;
+		gap: 0.75rem 1.5rem;
+		padding: 1rem var(--ldlg-pad);
+		border-top: 1px solid var(--line);
+		background: var(--paper-2);
+	}
+	.ldlg__page-link {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.4rem;
+		font-size: var(--text-sm);
+		font-weight: 600;
+		color: var(--bronze-deep);
+	}
+	.ldlg__done {
+		padding: 0.7rem 1.4rem;
+		border-radius: 999px;
+		background: var(--navy-900);
+		color: var(--cream);
+		font-size: var(--text-sm);
+		font-weight: 600;
+		transition: background-color var(--dur-fast) var(--ease-out);
+	}
+	.ldlg__done:hover,
+	.ldlg__done:focus-visible {
+		background: var(--navy-700);
+	}
+
+	@media (max-width: 40rem) {
+		.ldlg {
+			width: 100%;
+			max-height: 100svh;
+			border-radius: 0;
+		}
+		.ldlg__frame {
+			height: 100svh;
+		}
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.ldlg[open],
+		.ldlg[open]::backdrop,
+		.ldlg__doc {
+			animation: none;
+		}
+	}
+</style>

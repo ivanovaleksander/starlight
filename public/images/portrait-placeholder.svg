@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" role="img" aria-label="Място за професионален портрет">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1a2d4a"/>
+      <stop offset="1" stop-color="#0c1626"/>
+    </linearGradient>
+    <pattern id="g" width="50" height="50" patternUnits="userSpaceOnUse">
+      <path d="M50 0H0V50" fill="none" stroke="#c9a66b" stroke-opacity="0.16" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="800" height="1000" fill="url(#bg)"/>
+  <rect width="800" height="1000" fill="url(#g)"/>
+  <path d="M-20 820 L220 820 L360 680 L620 680 L760 540 L820 540" fill="none" stroke="#c9a66b" stroke-opacity="0.55" stroke-width="2"/>
+  <circle cx="220" cy="820" r="5" fill="#c9a66b"/>
+  <circle cx="360" cy="680" r="5" fill="#c9a66b"/>
+  <circle cx="620" cy="680" r="5" fill="#c9a66b"/>
+  <circle cx="760" cy="540" r="5" fill="#c9a66b"/>
+  <rect x="60" y="60" width="680" height="880" fill="none" stroke="#c9a66b" stroke-opacity="0.35" stroke-width="1.5"/>
+  <text x="400" y="480" text-anchor="middle" font-family="Georgia, serif" font-size="30" fill="#f7f4ee" opacity="0.9">Професионален портрет</text>
+  <text x="400" y="522" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" letter-spacing="4" fill="#c9a66b">ПРЕДСТОИ</text>
+</svg>

@@ -1,0 +1,150 @@
+---
+/** Карта на публикация – цялата карта води към статията. Двуезична (bg + en метаданни). */
+import Clock from '@lucide/astro/icons/clock';
+import ArrowUpRight from '@lucide/astro/icons/arrow-up-right';
+import { t, i18n, l10n, CATEGORY_KEYS } from '../i18n';
+import { readingTime, type PostPair } from '../i18n/publications';
+
+interface Props {
+	pair: PostPair;
+	index?: number;
+}
+const { pair, index = 0 } = Astro.props;
+const { bg, en, slug } = pair;
+const fmtBg = new Intl.DateTimeFormat('bg-BG', { day: 'numeric', month: 'long', year: 'numeric' });
+const fmtEn = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+const minutes = readingTime(bg.body);
+const categoryKey = CATEGORY_KEYS[bg.data.category] ?? 'civil';
+const title = { bg: bg.data.title, en: en?.data.title ?? bg.data.title };
+const summary = { bg: bg.data.summary, en: en?.data.summary ?? bg.data.summary };
+const dateText = { bg: fmtBg.format(bg.data.date), en: fmtEn.format(bg.data.date) };
+const href = `/publikacii/${slug}`;
+---
+
+<article class="pub" data-reveal style={`--reveal-delay:${index + 1}`}>
+	<div class="pub__meta">
+		<span class="pub__category" {...i18n(`publications.categories.${categoryKey}`)}>{t(`publications.categories.${categoryKey}`)}</span>
+		{bg.data.demo && <span class="demo-badge demo-badge--sm" {...i18n('publications.demoShort')}>{t('publications.demoShort')}</span>}
+	</div>
+	<h3 class="pub__title">
+		<a href={href} class="pub__link">
+			<span {...l10n(title)}>{title.bg}</span>
+			<ArrowUpRight class="pub__arrow" size={20} stroke-width={1.5} aria-hidden="true" />
+		</a>
+	</h3>
+	<p class="pub__summary" {...l10n(summary)}>{summary.bg}</p>
+	<footer class="pub__foot">
+		<time datetime={bg.data.date.toISOString().slice(0, 10)} {...l10n(dateText)}>{dateText.bg}</time>
+		<span class="pub__time">
+			<Clock size={14} aria-hidden="true" />
+			<span {...i18n('publications.readingTime', { n: minutes })}>{t('publications.readingTime', { n: minutes })}</span>
+		</span>
+	</footer>
+</article>
+
+<style>
+	.pub {
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+		padding: 1.75rem;
+		background: #fff;
+		border: 1px solid var(--line);
+		border-radius: var(--radius-lg);
+		transition:
+			transform var(--dur) var(--ease-out),
+			border-color var(--dur) var(--ease-out),
+			box-shadow var(--dur) var(--ease-out);
+	}
+	.pub:hover,
+	.pub:focus-within {
+		transform: translateY(-4px);
+		border-color: var(--accent-line);
+		box-shadow: 0 30px 50px -30px rgba(12, 22, 38, 0.35);
+	}
+	.pub__meta {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		gap: 0.75rem;
+	}
+	.pub__category {
+		font-size: var(--text-xs);
+		font-weight: 600;
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+		color: var(--accent);
+	}
+	.demo-badge {
+		display: inline-block;
+		padding: 0.1rem 0.45rem;
+		border: 1px dashed var(--line-strong);
+		border-radius: 999px;
+		font-size: 0.65rem;
+		font-weight: 600;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: var(--fg-subtle);
+	}
+	.pub__title {
+		font-size: clamp(1.25rem, 1vw + 0.9rem, 1.55rem);
+		line-height: 1.25;
+	}
+	/* Цялата карта е кликаема чрез псевдоелемент на връзката */
+	.pub__link {
+		display: inline;
+		background-image: linear-gradient(currentColor, currentColor);
+		background-repeat: no-repeat;
+		background-size: 0% 1px;
+		background-position: 0 100%;
+		transition: background-size var(--dur-slow) var(--ease-out);
+	}
+	.pub__link::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		border-radius: inherit;
+	}
+	.pub__link:focus-visible {
+		outline: none;
+	}
+	.pub:has(.pub__link:focus-visible) {
+		outline: 2px solid var(--accent);
+		outline-offset: 3px;
+	}
+	.pub:hover .pub__link,
+	.pub:focus-within .pub__link {
+		background-size: 100% 1px;
+	}
+	.pub__arrow {
+		display: inline;
+		vertical-align: -0.2em;
+		margin-left: 0.35rem;
+		color: var(--accent);
+		transition: transform var(--dur) var(--ease-out);
+	}
+	.pub:hover .pub__arrow {
+		transform: translate(3px, -3px);
+	}
+	.pub__summary {
+		color: var(--fg-muted);
+		font-size: var(--text-sm);
+		line-height: 1.65;
+	}
+	.pub__foot {
+		display: flex;
+		justify-content: space-between;
+		gap: 1rem;
+		margin-top: auto;
+		padding-top: 1rem;
+		border-top: 1px solid var(--line);
+		font-size: var(--text-xs);
+		color: var(--fg-subtle);
+	}
+	.pub__time {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.35rem;
+	}
+</style>

@@ -1,28 +1,36 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
-import starlight from '@astrojs/starlight';
+import sitemap from '@astrojs/sitemap';
+
+/**
+ * Публичният адрес на сайта се използва за canonical URL, Open Graph
+ * и структурираните данни. Netlify подава `URL` автоматично при build;
+ * при друг хостинг задайте PUBLIC_SITE_URL (напр. https://www.example.bg).
+ */
+const site =
+	process.env.PUBLIC_SITE_URL || process.env.URL || 'http://localhost:4321';
 
 // https://astro.build/config
 export default defineConfig({
+	site,
+	output: 'static',
 	integrations: [
-		starlight({
-			title: 'My Docs',
-			social: {
-				github: 'https://github.com/withastro/starlight',
-			},
-			sidebar: [
-				{
-					label: 'Guides',
-					items: [
-						// Each item here is one entry in the navigation menu.
-						{ label: 'Example Guide', slug: 'guides/example' },
-					],
-				},
-				{
-					label: 'Reference',
-					autogenerate: { directory: 'reference' },
-				},
-			],
+		sitemap({
+			// Правните подстраници са временни, а публикациите – демо; не се включват в sitemap-а.
+			// Премахнете `publikacii` от израза, когато статиите станат реални.
+			filter: (page) => !/politika-|pravna-|deklaracia-|publikacii/.test(page),
 		}),
 	],
+	trailingSlash: 'never',
+	build: {
+		inlineStylesheets: 'auto',
+	},
+	image: {
+		// sharp се използва за оптимизация на изображенията
+		service: { entrypoint: 'astro/assets/services/sharp' },
+	},
+	compressHTML: true,
+	vite: {
+		build: { cssMinify: true },
+	},
 });

@@ -1,0 +1,10 @@
+---
+import LegalLayout from '../layouts/LegalLayout.astro';
+import LegalNotice from '../components/legal/LegalNotice.astro';
+import LegalNoticeEn from '../components/legal/en/LegalNotice.astro';
+---
+
+<LegalLayout docKey="legal">
+	<LegalNotice />
+	<LegalNoticeEn slot="en" />
+</LegalLayout>

@@ -1,0 +1,217 @@
+---
+/**
+ * Области на практика – интерактивен списък с hover ефекти.
+ * Всеки ред води към контактната форма и предварително избира темата.
+ */
+import ArrowUpRight from '@lucide/astro/icons/arrow-up-right';
+import ServiceIcon from './ServiceIcon.astro';
+import Button from './Button.astro';
+import { services } from '../data/site';
+import { t, i18n } from '../i18n';
+---
+
+<section id="uslugi" class="section theme-dark practice" aria-labelledby="practice-title">
+	<div class="container">
+		<header class="practice__head">
+			<div>
+				<p class="eyebrow" data-reveal {...i18n('services.eyebrow')}>{t('services.eyebrow')}</p>
+				<h2 id="practice-title" data-reveal style="--reveal-delay:1" {...i18n('services.title')}>
+					{t('services.title')}
+				</h2>
+			</div>
+			<p class="lead" data-reveal style="--reveal-delay:2" {...i18n('services.lead')}>{t('services.lead')}</p>
+		</header>
+
+		<ol class="practice__list" data-reveal style="--reveal-delay:2">
+			{
+				services.map((s, i) => (
+					<li class="practice__item">
+						<a
+							href="#kontakti"
+							class="practice__link"
+							data-topic={s.key}
+							aria-label={t('services.inquiryAria', { title: t(`services.items.${s.key}.title`) })}
+							data-i18n-aria-service={s.key}
+						>
+							<span class="practice__index" aria-hidden="true">
+								0{i + 1}
+							</span>
+							<span class="practice__icon" aria-hidden="true">
+								<ServiceIcon name={s.icon} size={22} />
+							</span>
+							<span class="practice__body">
+								<h3 class="practice__title" {...i18n(`services.items.${s.key}.title`)}>{t(`services.items.${s.key}.title`)}</h3>
+								<p class="practice__desc" {...i18n(`services.items.${s.key}.desc`)}>{t(`services.items.${s.key}.desc`)}</p>
+							</span>
+							<span class="practice__arrow" aria-hidden="true">
+								<ArrowUpRight size={22} stroke-width={1.5} />
+							</span>
+						</a>
+					</li>
+				))
+			}
+		</ol>
+
+		<div class="practice__cta" data-reveal>
+			<p class="muted" {...i18n('services.ctaQuestion')}>{t('services.ctaQuestion')}</p>
+			<Button href="#kontakti" variant="link" {...i18n('services.ctaLink')}>{t('services.ctaLink')}</Button>
+		</div>
+	</div>
+</section>
+
+<style>
+	.practice__head {
+		display: grid;
+		gap: 1.5rem;
+		margin-bottom: clamp(2.5rem, 5vw, 4rem);
+	}
+	.practice__head h2 {
+		margin-top: 1rem;
+		max-width: 16ch;
+	}
+
+	.practice__list {
+		border-top: 1px solid var(--line);
+	}
+	.practice__item {
+		border-bottom: 1px solid var(--line);
+	}
+	.practice__link {
+		position: relative;
+		display: grid;
+		grid-template-columns: auto 1fr auto;
+		grid-template-areas:
+			'index icon arrow'
+			'body body body';
+		align-items: center;
+		gap: 0.75rem 1.25rem;
+		padding: 1.5rem 0.75rem;
+		isolation: isolate;
+		transition: color var(--dur) var(--ease-out);
+	}
+	.practice__link::before {
+		content: '';
+		position: absolute;
+		inset: 0 -0.75rem;
+		z-index: -1;
+		background: var(--navy-700);
+		transform: scaleY(0);
+		transform-origin: bottom;
+		transition: transform var(--dur) var(--ease-out);
+	}
+	.practice__link::after {
+		content: '';
+		position: absolute;
+		left: 0;
+		bottom: -1px;
+		height: 1px;
+		width: 100%;
+		background: var(--accent-line);
+		transform: scaleX(0);
+		transform-origin: left;
+		transition: transform var(--dur-slow) var(--ease-out);
+	}
+	.practice__link:hover,
+	.practice__link:focus-visible {
+		color: var(--cream);
+		outline: none;
+	}
+	.practice__link:hover::before,
+	.practice__link:focus-visible::before {
+		transform: scaleY(1);
+		transform-origin: top;
+	}
+	.practice__link:hover::after,
+	.practice__link:focus-visible::after {
+		transform: scaleX(1);
+	}
+	.practice__link:hover .practice__title,
+	.practice__link:focus-visible .practice__title {
+		color: var(--cream);
+	}
+	.practice__link:hover .practice__desc,
+	.practice__link:focus-visible .practice__desc {
+		color: var(--cream-2);
+	}
+	.practice__link:hover .practice__index,
+	.practice__link:focus-visible .practice__index,
+	.practice__link:hover .practice__icon,
+	.practice__link:focus-visible .practice__icon {
+		color: var(--bronze);
+	}
+
+	.practice__index {
+		grid-area: index;
+		font-size: var(--text-xs);
+		font-weight: 600;
+		letter-spacing: 0.14em;
+		color: var(--accent);
+		transition: color var(--dur) var(--ease-out);
+	}
+	.practice__icon {
+		grid-area: icon;
+		display: inline-flex;
+		color: var(--fg-subtle);
+		transition: color var(--dur) var(--ease-out);
+	}
+	.practice__body {
+		grid-area: body;
+		display: grid;
+		gap: 0.5rem;
+	}
+	.practice__title {
+		font-size: clamp(1.3rem, 1.4vw + 0.6rem, 1.85rem);
+		transition: color var(--dur) var(--ease-out);
+	}
+	.practice__desc {
+		color: var(--fg-muted);
+		max-width: 46rem;
+		transition: color var(--dur) var(--ease-out);
+	}
+	.practice__arrow {
+		grid-area: arrow;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 2.75rem;
+		height: 2.75rem;
+		border: 1px solid var(--line);
+		border-radius: 999px;
+		transition:
+			transform var(--dur) var(--ease-out),
+			border-color var(--dur) var(--ease-out),
+			background-color var(--dur) var(--ease-out);
+	}
+	.practice__link:hover .practice__arrow,
+	.practice__link:focus-visible .practice__arrow {
+		transform: translate(3px, -3px);
+		border-color: var(--bronze);
+		background: rgba(201, 166, 107, 0.12);
+	}
+
+	.practice__cta {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.5rem 1.5rem;
+		margin-top: 2.5rem;
+	}
+
+	@media (min-width: 56rem) {
+		.practice__head {
+			grid-template-columns: 1fr 1fr;
+			align-items: end;
+		}
+		.practice__link {
+			grid-template-columns: 3rem 3rem minmax(0, 1fr) auto;
+			grid-template-areas: 'index icon body arrow';
+			gap: 2rem;
+			padding: 2rem 1.25rem;
+		}
+		.practice__body {
+			grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+			align-items: center;
+			gap: 2.5rem;
+		}
+	}
+</style>

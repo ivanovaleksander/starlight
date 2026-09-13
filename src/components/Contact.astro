@@ -1,0 +1,215 @@
+---
+/**
+ * Контакти – лява колона с данни и пояснение; вдясно процесът за резервиране
+ * на консултация (BookingFlow). Картата се показва като връзка (без бисквитки от трети страни).
+ */
+import MapPin from '@lucide/astro/icons/map-pin';
+import Phone from '@lucide/astro/icons/phone';
+import Mail from '@lucide/astro/icons/mail';
+import Clock from '@lucide/astro/icons/clock';
+import ArrowUpRight from '@lucide/astro/icons/arrow-up-right';
+import LinkedInLink from './LinkedInLink.astro';
+import BookingFlow from './booking/BookingFlow.astro';
+import { site } from '../data/site';
+import { t, i18n, i18nAttr } from '../i18n';
+
+const c = site.contact;
+const tel = c.phone ? `tel:${c.phone.replace(/\s+/g, '')}` : null;
+---
+
+<section id="kontakti" class="section theme-dark contact" aria-labelledby="contact-title">
+	<div class="container contact__grid">
+		<div class="contact__info">
+			<p class="eyebrow" data-reveal {...i18n('contact.eyebrow')}>{t('contact.eyebrow')}</p>
+			<h2 id="contact-title" data-reveal style="--reveal-delay:1" {...i18n('contact.title')}>{t('contact.title')}</h2>
+			<p class="lead" data-reveal style="--reveal-delay:2" {...i18n('contact.lead')}>{t('contact.lead')}</p>
+
+			<ul class="contact__details" data-reveal style="--reveal-delay:3">
+				<li>
+					<span class="contact__icon" aria-hidden="true"><MapPin size={18} stroke-width={1.6} /></span>
+					<span>
+						<span class="contact__label" {...i18n('contact.address')}>{t('contact.address')}</span>
+						<span {...i18n('site.addressShort')}>{t('site.addressShort')}</span>
+					</span>
+				</li>
+				<li>
+					<span class="contact__icon" aria-hidden="true"><Phone size={18} stroke-width={1.6} /></span>
+					<span>
+						<span class="contact__label" {...i18n('contact.phone')}>{t('contact.phone')}</span>
+						{tel ? <a href={tel} class="u-link">{c.phone}</a> : <span class="placeholder" {...i18n('contact.pending')}>{t('contact.pending')}</span>}
+					</span>
+				</li>
+				<li>
+					<span class="contact__icon" aria-hidden="true"><Mail size={18} stroke-width={1.6} /></span>
+					<span>
+						<span class="contact__label" {...i18n('contact.email')}>{t('contact.email')}</span>
+						{c.email ? <a href={`mailto:${c.email}`} class="u-link">{c.email}</a> : <span class="placeholder" {...i18n('contact.pending')}>{t('contact.pending')}</span>}
+					</span>
+				</li>
+				<li>
+					<span class="contact__icon" aria-hidden="true"><Clock size={18} stroke-width={1.6} /></span>
+					<span>
+						<span class="contact__label" {...i18n('contact.hours')}>{t('contact.hours')}</span>
+						{c.hoursKey ? <span {...i18n(c.hoursKey)}>{t(c.hoursKey)}</span> : <span class="placeholder" {...i18n('contact.pending')}>{t('contact.pending')}</span>}
+					</span>
+				</li>
+			</ul>
+
+			<div class="contact__map" data-reveal style="--reveal-delay:4">
+				{
+					c.mapEmbedUrl ? (
+						<iframe src={c.mapEmbedUrl} {...i18nAttr({ title: 'contact.mapIframeTitle' })} loading="lazy" referrerpolicy="no-referrer-when-downgrade" />
+					) : c.mapUrl ? (
+						<a href={c.mapUrl} class="contact__map-link" target="_blank" rel="noopener noreferrer">
+							<MapPin size={18} aria-hidden="true" />
+							<span>
+								<strong {...i18n('contact.mapTitle')}>{t('contact.mapTitle')}</strong>
+								<span class="contact__map-sub"><span {...i18n('site.addressShort')}>{t('site.addressShort')}</span> · <span {...i18n('contact.mapSub')}>{t('contact.mapSub')}</span></span>
+							</span>
+							<ArrowUpRight size={18} aria-hidden="true" class="contact__map-arrow" />
+						</a>
+					) : (
+						<p class="contact__map-note">
+							<MapPin size={16} aria-hidden="true" />
+							<span {...i18n('contact.mapNote')}>{t('contact.mapNote')}</span>
+						</p>
+					)
+				}
+			</div>
+
+			<div class="contact__social" data-reveal style="--reveal-delay:4">
+				<LinkedInLink variant="text" labelKey="nav.linkedinConnect" size={18} />
+			</div>
+		</div>
+
+		<div class="contact__form-wrap theme-light" data-reveal style="--reveal-delay:2">
+			<!-- Процес за резервиране на консултация (3 стъпки) – виж src/components/booking/ и src/config/booking.ts -->
+			<BookingFlow />
+		</div>
+	</div>
+</section>
+
+<style>
+	.contact__grid {
+		display: grid;
+		gap: 3rem;
+	}
+	.contact__info h2 {
+		margin-top: 1rem;
+	}
+	.contact__info .lead {
+		margin-top: 1.25rem;
+	}
+	.contact__details {
+		display: grid;
+		gap: 1.1rem;
+		margin-top: 2.5rem;
+	}
+	.contact__details li {
+		display: flex;
+		gap: 1rem;
+		align-items: flex-start;
+	}
+	.contact__details li > span:last-child {
+		display: grid;
+		gap: 0.15rem;
+	}
+	.contact__icon {
+		flex: none;
+		display: grid;
+		place-items: center;
+		width: 2.5rem;
+		height: 2.5rem;
+		border: 1px solid var(--line);
+		border-radius: 999px;
+		color: var(--bronze);
+	}
+	.contact__label {
+		font-size: var(--text-xs);
+		font-weight: 600;
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+		color: var(--fg-subtle);
+	}
+	.contact__map {
+		margin-top: 2rem;
+		border: 1px solid var(--line-strong);
+		border-radius: var(--radius-lg);
+		overflow: hidden;
+	}
+	.contact__map iframe {
+		display: block;
+		width: 100%;
+		aspect-ratio: 16 / 9;
+		border: 0;
+	}
+	.contact__map-link {
+		display: flex;
+		align-items: center;
+		gap: 0.9rem;
+		padding: 1rem 1.25rem;
+		color: var(--fg);
+		transition: background-color var(--dur-fast) var(--ease-out);
+	}
+	.contact__map-link > svg:first-child {
+		flex: none;
+		color: var(--bronze);
+	}
+	.contact__map-link > span {
+		display: grid;
+		gap: 0.15rem;
+		flex: 1;
+	}
+	.contact__map-sub {
+		font-size: var(--text-xs);
+		color: var(--fg-subtle);
+	}
+	.contact__map-arrow {
+		flex: none;
+		color: var(--bronze);
+		transition: transform var(--dur) var(--ease-out);
+	}
+	.contact__map-link:hover,
+	.contact__map-link:focus-visible {
+		background: rgba(201, 166, 107, 0.08);
+	}
+	.contact__map-link:hover .contact__map-arrow {
+		transform: translate(3px, -3px);
+	}
+	.contact__map-note {
+		display: flex;
+		gap: 0.6rem;
+		align-items: center;
+		padding: 1rem 1.25rem;
+		font-size: var(--text-sm);
+		color: var(--fg-muted);
+	}
+	.contact__social {
+		margin-top: 1.5rem;
+	}
+
+	/* Форма */
+	.contact__form-wrap {
+		position: relative;
+		background: var(--paper);
+		color: var(--ink);
+		border-radius: var(--radius-lg);
+		padding: clamp(1.5rem, 3.5vw, 2.75rem);
+		box-shadow: 0 40px 80px -40px rgba(0, 0, 0, 0.6);
+	}
+	/* Телефон: картата за резервация използва цялата ширина, за да са удобни календарът и часовете */
+	@media (max-width: 29.99rem) {
+		.contact__form-wrap {
+			margin-inline: calc(-1 * var(--gutter));
+			border-radius: 0;
+			padding: 1.5rem var(--gutter) 1.75rem;
+		}
+	}
+	@media (min-width: 60rem) {
+		.contact__grid {
+			grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+			gap: 5rem;
+			align-items: start;
+		}
+	}
+</style>

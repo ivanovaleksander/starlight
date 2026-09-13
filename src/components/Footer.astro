@@ -1,0 +1,166 @@
+---
+import LinkedInLink from './LinkedInLink.astro';
+import Logo from './Logo.astro';
+import { site, nav, legalList } from '../data/site';
+import { t, i18n, i18nAttr } from '../i18n';
+
+const year = new Date().getFullYear();
+const c = site.contact;
+const tel = c.phone ? `tel:${c.phone.replace(/\s+/g, '')}` : null;
+/** Извън началната страница котвите водят към началото. */
+const prefix = Astro.url.pathname.replace(/\/$/, '') !== '' ? '/' : '';
+---
+
+<footer class="footer theme-dark" aria-labelledby="footer-title">
+	<div class="container">
+		<div class="footer__top">
+			<div class="footer__brand">
+				<Logo size={48} class="footer__mark" />
+				<p id="footer-title" class="footer__name">{site.brand}</p>
+				<p class="footer__person" {...i18n('site.person')}>{t('site.person')}</p>
+				<p class="footer__tag muted" {...i18n('site.tagline')}>{t('site.tagline')}</p>
+				<LinkedInLink variant="icon" size={18} class="footer__li" />
+			</div>
+
+			<nav class="footer__col" {...i18nAttr({ 'aria-label': 'footer.navAria' })}>
+				<p class="footer__heading" {...i18n('footer.navigation')}>{t('footer.navigation')}</p>
+				<ul>
+					{
+						nav.map((item) => (
+							<li>
+								<a href={`${prefix}${item.href}`} class="u-link footer__link" {...i18n(item.key)}>
+									{t(item.key)}
+								</a>
+							</li>
+						))
+					}
+				</ul>
+			</nav>
+
+			<div class="footer__col">
+				<p class="footer__heading" {...i18n('footer.contacts')}>{t('footer.contacts')}</p>
+				<ul class="footer__contacts">
+					<li {...i18n('site.addressLine1')}>{t('site.addressLine1')}</li>
+					<li {...i18n('site.addressLine2')}>{t('site.addressLine2')}</li>
+					<li>
+						{tel ? <a href={tel} class="u-link footer__link">{c.phone}</a> : <span class="placeholder" {...i18n('footer.phonePending')}>{t('footer.phonePending')}</span>}
+					</li>
+					<li>
+						{c.email ? <a href={`mailto:${c.email}`} class="u-link footer__link">{c.email}</a> : <span class="placeholder" {...i18n('footer.emailPending')}>{t('footer.emailPending')}</span>}
+					</li>
+					<li>
+						<a href={site.linkedin} target="_blank" rel="noopener noreferrer" class="u-link footer__link">LinkedIn</a>
+					</li>
+				</ul>
+			</div>
+
+			<div class="footer__col">
+				<p class="footer__heading" {...i18n('footer.legal')}>{t('footer.legal')}</p>
+				<ul>
+					{
+						legalList.map((l) => (
+							<li>
+								<a href={l.href} class="u-link footer__link" data-legal-open={l.key} {...i18n(`legal.docs.${l.key}.title`)}>
+									{t(`legal.docs.${l.key}.title`)}
+								</a>
+							</li>
+						))
+					}
+				</ul>
+			</div>
+		</div>
+
+		<div class="footer__bottom">
+			<p>© {year} {site.brand} · <span {...i18n('site.person')}>{t('site.person')}</span>. <span {...i18n('footer.rights')}>{t('footer.rights')}</span></p>
+			<p class="muted" {...i18n('footer.disclaimer')}>{t('footer.disclaimer')}</p>
+		</div>
+	</div>
+</footer>
+
+<style>
+	.footer {
+		background: var(--navy-950);
+		color: var(--cream-2);
+		padding-block: clamp(3.5rem, 7vw, 6rem) 2rem;
+		border-top: 1px solid var(--line);
+	}
+	.footer__top {
+		display: grid;
+		gap: 2.5rem;
+	}
+	.footer__brand {
+		display: grid;
+		gap: 0.5rem;
+		align-content: start;
+	}
+	.footer__mark {
+		color: var(--bronze);
+		margin-bottom: 0.75rem;
+	}
+	.footer__name {
+		font-family: var(--font-display);
+		font-weight: 600;
+		font-size: 1.5rem;
+		letter-spacing: 0.16em;
+		color: var(--cream);
+	}
+	.footer__person {
+		font-size: var(--text-xs);
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+		color: var(--bronze);
+	}
+	.footer__tag {
+		margin-top: 0.75rem;
+		max-width: 22rem;
+		font-size: var(--text-sm);
+	}
+	.footer__li {
+		margin-top: 1rem;
+		justify-self: start;
+	}
+	.footer__heading {
+		font-size: var(--text-xs);
+		font-weight: 600;
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+		color: var(--cream);
+		margin-bottom: 1rem;
+	}
+	.footer__col ul {
+		display: grid;
+		gap: 0;
+		font-size: var(--text-sm);
+	}
+	.footer__contacts li {
+		min-height: 2rem;
+		display: flex;
+		align-items: center;
+	}
+	.footer__link:hover,
+	.footer__link:focus-visible {
+		color: var(--bronze);
+	}
+	.footer__bottom {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-between;
+		gap: 0.75rem 2rem;
+		margin-top: 3.5rem;
+		padding-top: 1.5rem;
+		border-top: 1px solid var(--line);
+		font-size: var(--text-xs);
+	}
+
+	@media (min-width: 40rem) {
+		.footer__top {
+			grid-template-columns: 1fr 1fr;
+		}
+	}
+	@media (min-width: 64rem) {
+		.footer__top {
+			grid-template-columns: 1.6fr 1fr 1fr 1fr;
+			gap: 3rem;
+		}
+	}
+</style>

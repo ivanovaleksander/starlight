@@ -16,8 +16,9 @@ export default defineConfig({
 	output: 'static',
 	integrations: [
 		sitemap({
-			// Правните подстраници са временни и не се включват в sitemap-а
-			filter: (page) => !/politika-|pravna-|deklaracia-/.test(page),
+			// Правните подстраници са временни, а публикациите – демо; не се включват в sitemap-а.
+			// Премахнете `publikacii` от израза, когато статиите станат реални.
+			filter: (page) => !/politika-|pravna-|deklaracia-|publikacii/.test(page),
 		}),
 	],
 	trailingSlash: 'never',

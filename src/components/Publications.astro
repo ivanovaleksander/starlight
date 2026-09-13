@@ -1,13 +1,16 @@
 ---
 /**
- * Публикации – правни анализи и практични статии.
- * ВНИМАНИЕ: съдържанието е ДЕМО и е ясно означено като такова.
+ * Публикации – трите най-нови статии от колекцията src/content/publications/.
+ * Всяка карта води към пълния текст на /publikacii/<slug>.
  */
-import Clock from '@lucide/astro/icons/clock';
-import ArrowUpRight from '@lucide/astro/icons/arrow-up-right';
-import { publications } from '../data/site';
+import { getCollection } from 'astro:content';
+import PublicationCard from './PublicationCard.astro';
+import Button from './Button.astro';
 
-const fmt = new Intl.DateTimeFormat('bg-BG', { day: 'numeric', month: 'long', year: 'numeric' });
+const posts = (await getCollection('publications'))
+	.sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+	.slice(0, 3);
+const hasDemo = posts.some((p) => p.data.demo);
 ---
 
 <section id="publikacii" class="section theme-light publications" aria-labelledby="pub-title">
@@ -19,42 +22,28 @@ const fmt = new Intl.DateTimeFormat('bg-BG', { day: 'numeric', month: 'long', ye
 					Правни анализи и практични статии.
 				</h2>
 			</div>
-			<p class="publications__note" data-reveal style="--reveal-delay:2">
-				<span class="demo-badge">Демо съдържание</span>
-				Примерни заглавия, които показват оформлението на секцията. Те не представляват
-				публикувани становища на адвокат Хинков.
-			</p>
+			{
+				hasDemo ? (
+					<p class="publications__note" data-reveal style="--reveal-delay:2">
+						<span class="demo-badge">Демо съдържание</span>
+						Примерни статии, които показват оформлението на секцията. Те не представляват
+						публикувани становища на адвокат Хинков.
+					</p>
+				) : (
+					<p class="publications__note" data-reveal style="--reveal-delay:2">
+						Кратки анализи по практични правни въпроси за граждани и бизнес.
+					</p>
+				)
+			}
 		</header>
 
 		<div class="publications__grid">
-			{
-				publications.map((p, i) => (
-					<article class="pub" data-reveal style={`--reveal-delay:${i + 1}`}>
-						<div class="pub__meta">
-							<span class="pub__category">{p.category}</span>
-							<span class="demo-badge demo-badge--sm">Демо</span>
-						</div>
-						<h3 class="pub__title">
-							<a href="#publikacii" class="pub__link" aria-describedby="pub-demo-note">
-								{p.title}
-								<ArrowUpRight class="pub__arrow" size={20} stroke-width={1.5} aria-hidden="true" />
-							</a>
-						</h3>
-						<p class="pub__summary">{p.summary}</p>
-						<footer class="pub__foot">
-							<time datetime={p.date}>{fmt.format(new Date(p.date))}</time>
-							<span class="pub__time">
-								<Clock size={14} aria-hidden="true" />
-								{p.readingTime} мин четене
-							</span>
-						</footer>
-					</article>
-				))
-			}
+			{posts.map((post, i) => <PublicationCard post={post} index={i} />)}
 		</div>
-		<p id="pub-demo-note" class="visually-hidden">
-			Демо статия – реалната публикация все още не е налична.
-		</p>
+
+		<div class="publications__more" data-reveal>
+			<Button href="/publikacii" variant="link">Всички публикации</Button>
+		</div>
 	</div>
 </section>
 
@@ -85,94 +74,13 @@ const fmt = new Intl.DateTimeFormat('bg-BG', { day: 'numeric', month: 'long', ye
 		text-transform: uppercase;
 		color: var(--fg-subtle);
 	}
-	.demo-badge--sm {
-		margin: 0;
-		font-size: 0.65rem;
-		padding: 0.1rem 0.45rem;
-	}
-
 	.publications__grid {
 		display: grid;
 		gap: 1.25rem;
 	}
-	.pub {
-		display: flex;
-		flex-direction: column;
-		gap: 1rem;
-		padding: 1.75rem;
-		background: #fff;
-		border: 1px solid var(--line);
-		border-radius: var(--radius-lg);
-		transition:
-			transform var(--dur) var(--ease-out),
-			border-color var(--dur) var(--ease-out),
-			box-shadow var(--dur) var(--ease-out);
+	.publications__more {
+		margin-top: 2rem;
 	}
-	.pub:hover {
-		transform: translateY(-4px);
-		border-color: var(--accent-line);
-		box-shadow: 0 30px 50px -30px rgba(12, 22, 38, 0.35);
-	}
-	.pub__meta {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		gap: 0.75rem;
-	}
-	.pub__category {
-		font-size: var(--text-xs);
-		font-weight: 600;
-		letter-spacing: 0.12em;
-		text-transform: uppercase;
-		color: var(--accent);
-	}
-	.pub__title {
-		font-size: clamp(1.25rem, 1vw + 0.9rem, 1.55rem);
-		line-height: 1.25;
-	}
-	.pub__link {
-		display: inline;
-		background-image: linear-gradient(currentColor, currentColor);
-		background-repeat: no-repeat;
-		background-size: 0% 1px;
-		background-position: 0 100%;
-		transition: background-size var(--dur-slow) var(--ease-out);
-	}
-	.pub:hover .pub__link,
-	.pub__link:focus-visible {
-		background-size: 100% 1px;
-	}
-	.pub__arrow {
-		display: inline;
-		vertical-align: -0.2em;
-		margin-left: 0.35rem;
-		color: var(--accent);
-		transition: transform var(--dur) var(--ease-out);
-	}
-	.pub:hover .pub__arrow {
-		transform: translate(3px, -3px);
-	}
-	.pub__summary {
-		color: var(--fg-muted);
-		font-size: var(--text-sm);
-		line-height: 1.65;
-	}
-	.pub__foot {
-		display: flex;
-		justify-content: space-between;
-		gap: 1rem;
-		margin-top: auto;
-		padding-top: 1rem;
-		border-top: 1px solid var(--line);
-		font-size: var(--text-xs);
-		color: var(--fg-subtle);
-	}
-	.pub__time {
-		display: inline-flex;
-		align-items: center;
-		gap: 0.35rem;
-	}
-
 	@media (min-width: 40rem) {
 		.publications__grid {
 			grid-template-columns: repeat(2, minmax(0, 1fr));

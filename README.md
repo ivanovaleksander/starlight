@@ -26,6 +26,7 @@ src/
 │   ├── main.ts             # header, мобилно меню, reveal анимации, активна навигация
 │   └── booking.ts          # процес за резервиране на консултация (3 стъпки)
 ├── config/booking.ts       # настройки на резервациите и интеграция с Microsoft Bookings
+├── content/publications/   # статии (Markdown) → /publikacii/<slug>; схема в content.config.ts
 ├── components/booking/     # BookingFlow, ServiceSelector, BookingCalendar, AvailableTimes…
 ├── styles/global.css       # дизайн токени, типография, reset, анимации
 └── pages/                  # index + три правни подстраници
@@ -41,7 +42,7 @@ scripts/generate-og.mjs     # генерира OG изображението ч�
 | Биография, образование, опит | `src/components/About.astro` (масивът `facts`) | попълнени |
 | Адрес, телефон, имейл, работно време | `src/data/site.ts` → `site.contact` | placeholder |
 | Карта | `site.contact.mapEmbedUrl` – показва се само ако е зададен | изключена |
-| Публикации | `src/data/site.ts` → `publications` | **демо съдържание** |
+| Публикации | Markdown файлове в `src/content/publications/` (front matter: title, category, summary, date, demo) | **демо съдържание** – заменете с реални статии и задайте `demo: false` |
 | Политики (поверителност, бисквитки, правна информация) | `src/pages/politika-*.astro`, `pravna-informacia.astro` | временен текст, `noindex` |
 | Публичен домейн | `PUBLIC_SITE_URL` (Netlify подава `URL` автоматично) | – |
 | Microsoft Bookings страница | `PUBLIC_BOOKING_PAGE_URL` (виж `.env.example` и `src/config/booking.ts`) | **не е свързана** |

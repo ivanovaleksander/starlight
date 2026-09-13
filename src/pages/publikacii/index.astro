@@ -1,0 +1,64 @@
+---
+/** Списък с всички публикации. */
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PublicationCard from '../../components/PublicationCard.astro';
+import { site } from '../../data/site';
+
+const posts = (await getCollection('publications')).sort(
+	(a, b) => b.data.date.getTime() - a.data.date.getTime(),
+);
+const allDemo = posts.every((p) => p.data.demo);
+---
+
+<BaseLayout
+	title={`Публикации | ${site.brand}`}
+	description="Правни анализи и практични статии от адвокат Тодор Хинков – гражданско, административно, търговско и вещно право."
+	noindex={allDemo}
+>
+	<section class="pubs theme-light">
+		<div class="container">
+			<a href="/" class="pubs__back u-link">← Обратно към началото</a>
+			<p class="eyebrow">Публикации</p>
+			<h1 class="pubs__title">Правни анализи и практични статии.</h1>
+			<div class="pubs__grid">
+				{posts.map((post, i) => <PublicationCard post={post} index={i} />)}
+			</div>
+		</div>
+	</section>
+</BaseLayout>
+
+<style>
+	.pubs {
+		padding-top: calc(var(--header-h) + clamp(3rem, 6vw, 5rem));
+		padding-bottom: var(--section-y);
+		background: var(--paper);
+		color: var(--ink);
+	}
+	.pubs__back {
+		display: table;
+		margin-bottom: 2.5rem;
+		font-size: var(--text-sm);
+		color: var(--fg-muted);
+	}
+	.pubs__title {
+		font-size: var(--text-h2);
+		margin: 1rem 0 2.5rem;
+		max-width: 16ch;
+	}
+	.pubs__grid {
+		display: grid;
+		gap: 1.25rem;
+	}
+	@media (min-width: 40rem) {
+		.pubs__grid {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+	}
+	@media (min-width: 56rem) {
+		.pubs__grid {
+			grid-template-columns: repeat(3, minmax(0, 1fr));
+			gap: 1.5rem;
+		}
+	}
+</style>

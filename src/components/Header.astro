@@ -88,13 +88,13 @@ const prefix = solid ? '/' : '';
 		position: fixed;
 		inset: 0 0 auto 0;
 		z-index: 100;
-		height: var(--header-h);
+		height: var(--header-total);
+		padding-top: var(--safe-top);
 		color: var(--cream);
 		background: transparent;
 		transition:
 			background-color var(--dur) var(--ease-out),
-			box-shadow var(--dur) var(--ease-out),
-			transform var(--dur) var(--ease-out);
+			box-shadow var(--dur) var(--ease-out);
 	}
 	.header::after {
 		content: '';
@@ -109,16 +109,14 @@ const prefix = solid ? '/' : '';
 	}
 	.header.is-solid,
 	.header.is-scrolled {
-		background: rgba(12, 22, 38, 0.82);
+		background: rgba(12, 22, 38, 0.86);
 		-webkit-backdrop-filter: blur(14px) saturate(140%);
 		backdrop-filter: blur(14px) saturate(140%);
+		box-shadow: 0 8px 30px -18px rgba(0, 0, 0, 0.6);
 	}
 	.header.is-solid::after,
 	.header.is-scrolled::after {
 		opacity: 1;
-	}
-	.header.is-hidden {
-		transform: translateY(-100%);
 	}
 	.header.is-open {
 		background: var(--navy-950);
@@ -176,7 +174,7 @@ const prefix = solid ? '/' : '';
 	.nav__link {
 		position: relative;
 		display: inline-block;
-		padding: 0.5rem 0;
+		padding: 0.8rem 0;
 		font-size: var(--text-sm);
 		font-weight: 500;
 		color: var(--cream-2);
@@ -250,7 +248,8 @@ const prefix = solid ? '/' : '';
 	/* Мобилно меню */
 	.mobile-menu {
 		position: fixed;
-		inset: var(--header-h) 0 0 0;
+		inset: var(--header-total) 0 0 0;
+		height: calc(100dvh - var(--header-total));
 		background: var(--navy-950);
 		color: var(--cream);
 		overflow-y: auto;
@@ -270,7 +269,7 @@ const prefix = solid ? '/' : '';
 		flex-direction: column;
 		justify-content: space-between;
 		min-height: 100%;
-		padding-block: 2rem 2.5rem;
+		padding-block: 1.5rem calc(2rem + var(--safe-bottom));
 		gap: 2rem;
 	}
 	.mobile-menu__list li,
@@ -291,7 +290,8 @@ const prefix = solid ? '/' : '';
 		display: flex;
 		align-items: baseline;
 		gap: 1rem;
-		padding: 0.85rem 0;
+		min-height: 3rem;
+		padding: 0.7rem 0;
 		border-bottom: 1px solid var(--line);
 		font-family: var(--font-display);
 		font-size: clamp(1.5rem, 5.5vw, 2.1rem);
@@ -316,6 +316,12 @@ const prefix = solid ? '/' : '';
 		gap: 0.75rem;
 	}
 
+	/* Много тесни екрани (≤ 359px): само монограмът; името остава в aria-label */
+	@media (max-width: 22.49rem) {
+		.brand__text {
+			display: none;
+		}
+	}
 	/* Тесни екрани: компактен бранд и превключвател само с флагове, за да се събере всичко на един ред */
 	@media (max-width: 47.99rem) {
 		.brand__sub {
@@ -354,6 +360,14 @@ const prefix = solid ? '/' : '';
 	@media (min-width: 64rem) and (max-width: 80rem) {
 		.header__actions .header__cta {
 			display: none;
+		}
+	}
+	@media (min-width: 64rem) and (max-width: 72rem) {
+		.header__actions .header__li {
+			display: none;
+		}
+		.nav__list {
+			gap: 0.85rem;
 		}
 	}
 	@media (prefers-reduced-motion: reduce) {

@@ -197,6 +197,14 @@ const tel = c.phone ? `tel:${c.phone.replace(/\s+/g, '')}` : null;
 		padding: clamp(1.5rem, 3.5vw, 2.75rem);
 		box-shadow: 0 40px 80px -40px rgba(0, 0, 0, 0.6);
 	}
+	/* Телефон: картата за резервация използва цялата ширина, за да са удобни календарът и часовете */
+	@media (max-width: 29.99rem) {
+		.contact__form-wrap {
+			margin-inline: calc(-1 * var(--gutter));
+			border-radius: 0;
+			padding: 1.5rem var(--gutter) 1.75rem;
+		}
+	}
 	@media (min-width: 60rem) {
 		.contact__grid {
 			grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);

@@ -129,8 +129,13 @@ const prefix = Astro.url.pathname.replace(/\/$/, '') !== '' ? '/' : '';
 	}
 	.footer__col ul {
 		display: grid;
-		gap: 0.6rem;
+		gap: 0;
 		font-size: var(--text-sm);
+	}
+	.footer__contacts li {
+		min-height: 2rem;
+		display: flex;
+		align-items: center;
 	}
 	.footer__link:hover,
 	.footer__link:focus-visible {

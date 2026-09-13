@@ -14,20 +14,11 @@ const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').match
 function initHeader() {
 	const header = document.querySelector<HTMLElement>('[data-header]');
 	if (!header) return;
-	let lastY = window.scrollY;
 	let ticking = false;
 
+	/* Header-ът е фиксиран и винаги видим; при скрол само получава плътен фон и blur. */
 	const update = () => {
-		const y = window.scrollY;
-		header.classList.toggle('is-scrolled', y > 24);
-		// Скрива header-а при скрол надолу, показва при скрол нагоре (само десктоп)
-		const menuOpen = header.classList.contains('is-open');
-		if (!menuOpen && window.innerWidth >= 1024) {
-			header.classList.toggle('is-hidden', y > lastY && y > 320);
-		} else {
-			header.classList.remove('is-hidden');
-		}
-		lastY = y;
+		header.classList.toggle('is-scrolled', window.scrollY > 24);
 		ticking = false;
 	};
 	window.addEventListener(
@@ -69,7 +60,9 @@ function initMobileMenu() {
 		setOpen(toggle.getAttribute('aria-expanded') !== 'true');
 	});
 	menu.addEventListener('click', (e) => {
-		if ((e.target as HTMLElement).closest('a')) setOpen(false);
+		const t = e.target as HTMLElement;
+		// избор на страница или клик извън списъка/бутоните затваря менюто
+		if (t.closest('a') || !t.closest('.mobile-menu__list, .mobile-menu__footer')) setOpen(false);
 	});
 	document.addEventListener('keydown', (e) => {
 		if (e.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') {

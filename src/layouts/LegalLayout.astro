@@ -77,7 +77,7 @@ const description = both(`legal.docs.${docKey}.description`);
 
 <style>
 	.legal {
-		padding-top: calc(var(--header-h) + clamp(3rem, 6vw, 5rem));
+		padding-top: calc(var(--header-total) + clamp(3rem, 6vw, 5rem));
 		padding-bottom: var(--section-y);
 		background: var(--paper);
 		color: var(--ink);
@@ -85,6 +85,9 @@ const description = both(`legal.docs.${docKey}.description`);
 	.legal__grid {
 		display: grid;
 		gap: 3rem;
+	}
+	.legal__grid > * {
+		min-width: 0;
 	}
 	.legal__aside {
 		display: grid;
@@ -178,7 +181,7 @@ const description = both(`legal.docs.${docKey}.description`);
 		}
 		.legal__aside {
 			position: sticky;
-			top: calc(var(--header-h) + 2rem);
+			top: calc(var(--header-total) + 2rem);
 		}
 	}
 </style>

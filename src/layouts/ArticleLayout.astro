@@ -84,13 +84,14 @@ const dateText = { bg: fmtBg.format(date), en: fmtEn.format(date) };
 
 <style>
 	.article {
-		padding-top: calc(var(--header-h) + clamp(3rem, 6vw, 5rem));
+		padding-top: calc(var(--header-total) + clamp(3rem, 6vw, 5rem));
 		padding-bottom: var(--section-y);
 		background: var(--paper);
 		color: var(--ink);
 	}
 	.article__inner {
 		max-width: 46rem;
+		min-width: 0;
 	}
 	.article__back {
 		display: inline-flex;

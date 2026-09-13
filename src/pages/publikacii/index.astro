@@ -3,26 +3,21 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PublicationCard from '../../components/PublicationCard.astro';
-import { site } from '../../data/site';
+import { t, both, i18n } from '../../i18n';
+import { pairPosts } from '../../i18n/publications';
 
-const posts = (await getCollection('publications')).sort(
-	(a, b) => b.data.date.getTime() - a.data.date.getTime(),
-);
-const allDemo = posts.every((p) => p.data.demo);
+const pairs = pairPosts(await getCollection('publications'));
+const allDemo = pairs.every((p) => p.bg.data.demo);
 ---
 
-<BaseLayout
-	title={`Публикации | ${site.brand}`}
-	description="Правни анализи и практични статии от адвокат Тодор Хинков – гражданско, административно, търговско и вещно право."
-	noindex={allDemo}
->
+<BaseLayout title={both('seo.publicationsTitle')} description={both('seo.publicationsDescription')} noindex={allDemo}>
 	<section class="pubs theme-light">
 		<div class="container">
-			<a href="/" class="pubs__back u-link">← Обратно към началото</a>
-			<p class="eyebrow">Публикации</p>
-			<h1 class="pubs__title">Правни анализи и практични статии.</h1>
+			<a href="/" class="pubs__back u-link" {...i18n('nav.backHome')}>{t('nav.backHome')}</a>
+			<p class="eyebrow" {...i18n('publications.eyebrow')}>{t('publications.eyebrow')}</p>
+			<h1 class="pubs__title" {...i18n('publications.title')}>{t('publications.title')}</h1>
 			<div class="pubs__grid">
-				{posts.map((post, i) => <PublicationCard post={post} index={i} />)}
+				{pairs.map((pair, i) => <PublicationCard pair={pair} index={i} />)}
 			</div>
 		</div>
 	</section>

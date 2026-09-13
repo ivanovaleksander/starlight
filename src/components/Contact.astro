@@ -1,7 +1,7 @@
 ---
 /**
  * Контакти – лява колона с данни и пояснение; вдясно процесът за резервиране
- * на консултация (BookingFlow). Картата се показва само при наличен адрес.
+ * на консултация (BookingFlow). Картата се показва като връзка (без бисквитки от трети страни).
  */
 import MapPin from '@lucide/astro/icons/map-pin';
 import Phone from '@lucide/astro/icons/phone';
@@ -10,88 +10,75 @@ import Clock from '@lucide/astro/icons/clock';
 import ArrowUpRight from '@lucide/astro/icons/arrow-up-right';
 import LinkedInLink from './LinkedInLink.astro';
 import BookingFlow from './booking/BookingFlow.astro';
-import { site, PLACEHOLDER } from '../data/site';
+import { site } from '../data/site';
+import { t, i18n, i18nAttr } from '../i18n';
 
-const details = [
-	{ icon: MapPin, label: 'Адрес', value: site.contact.address },
-	{ icon: Phone, label: 'Телефон', value: site.contact.phone },
-	{ icon: Mail, label: 'Имейл', value: site.contact.email },
-	{ icon: Clock, label: 'Работно време', value: site.contact.hours },
-];
-const isPlaceholder = (v: string | null) => !v || v === PLACEHOLDER;
+const c = site.contact;
+const tel = c.phone ? `tel:${c.phone.replace(/\s+/g, '')}` : null;
 ---
 
 <section id="kontakti" class="section theme-dark contact" aria-labelledby="contact-title">
 	<div class="container contact__grid">
 		<div class="contact__info">
-			<p class="eyebrow" data-reveal>Контакти</p>
-			<h2 id="contact-title" data-reveal style="--reveal-delay:1">Запазете консултация.</h2>
-			<p class="lead" data-reveal style="--reveal-delay:2">
-				Опишете накратко казуса си и ще се свържа с вас, за да уточним следващите стъпки.
-			</p>
+			<p class="eyebrow" data-reveal {...i18n('contact.eyebrow')}>{t('contact.eyebrow')}</p>
+			<h2 id="contact-title" data-reveal style="--reveal-delay:1" {...i18n('contact.title')}>{t('contact.title')}</h2>
+			<p class="lead" data-reveal style="--reveal-delay:2" {...i18n('contact.lead')}>{t('contact.lead')}</p>
 
 			<ul class="contact__details" data-reveal style="--reveal-delay:3">
-				{
-					details.map(({ icon: Icon, label, value }) => (
-						<li>
-							<span class="contact__icon" aria-hidden="true">
-								<Icon size={18} stroke-width={1.6} />
-							</span>
-							<span>
-								<span class="contact__label">{label}</span>
-								{isPlaceholder(value) ? (
-									<span class="placeholder">{PLACEHOLDER}</span>
-								) : label === 'Имейл' ? (
-									<a href={`mailto:${value}`} class="u-link">
-										{value}
-									</a>
-								) : label === 'Телефон' ? (
-									<a href={`tel:${value!.replace(/\s+/g, '')}`} class="u-link">
-										{value}
-									</a>
-								) : (
-									<span>{value}</span>
-								)}
-							</span>
-						</li>
-					))
-				}
+				<li>
+					<span class="contact__icon" aria-hidden="true"><MapPin size={18} stroke-width={1.6} /></span>
+					<span>
+						<span class="contact__label" {...i18n('contact.address')}>{t('contact.address')}</span>
+						<span {...i18n('site.addressShort')}>{t('site.addressShort')}</span>
+					</span>
+				</li>
+				<li>
+					<span class="contact__icon" aria-hidden="true"><Phone size={18} stroke-width={1.6} /></span>
+					<span>
+						<span class="contact__label" {...i18n('contact.phone')}>{t('contact.phone')}</span>
+						{tel ? <a href={tel} class="u-link">{c.phone}</a> : <span class="placeholder" {...i18n('contact.pending')}>{t('contact.pending')}</span>}
+					</span>
+				</li>
+				<li>
+					<span class="contact__icon" aria-hidden="true"><Mail size={18} stroke-width={1.6} /></span>
+					<span>
+						<span class="contact__label" {...i18n('contact.email')}>{t('contact.email')}</span>
+						{c.email ? <a href={`mailto:${c.email}`} class="u-link">{c.email}</a> : <span class="placeholder" {...i18n('contact.pending')}>{t('contact.pending')}</span>}
+					</span>
+				</li>
+				<li>
+					<span class="contact__icon" aria-hidden="true"><Clock size={18} stroke-width={1.6} /></span>
+					<span>
+						<span class="contact__label" {...i18n('contact.hours')}>{t('contact.hours')}</span>
+						{c.hoursKey ? <span {...i18n(c.hoursKey)}>{t(c.hoursKey)}</span> : <span class="placeholder" {...i18n('contact.pending')}>{t('contact.pending')}</span>}
+					</span>
+				</li>
 			</ul>
 
 			<div class="contact__map" data-reveal style="--reveal-delay:4">
 				{
-					site.contact.mapEmbedUrl ? (
-						<iframe
-							src={site.contact.mapEmbedUrl}
-							title="Карта с местоположението на кантората"
-							loading="lazy"
-							referrerpolicy="no-referrer-when-downgrade"
-						/>
-					) : site.contact.mapUrl ? (
-						<a
-							href={site.contact.mapUrl}
-							class="contact__map-link"
-							target="_blank"
-							rel="noopener noreferrer"
-						>
+					c.mapEmbedUrl ? (
+						<iframe src={c.mapEmbedUrl} {...i18nAttr({ title: 'contact.mapIframeTitle' })} loading="lazy" referrerpolicy="no-referrer-when-downgrade" />
+					) : c.mapUrl ? (
+						<a href={c.mapUrl} class="contact__map-link" target="_blank" rel="noopener noreferrer">
 							<MapPin size={18} aria-hidden="true" />
 							<span>
-								<strong>Вижте кантората на картата</strong>
-								<span class="contact__map-sub">{site.contact.address} · отваря се в Google Maps</span>
+								<strong {...i18n('contact.mapTitle')}>{t('contact.mapTitle')}</strong>
+								<span class="contact__map-sub"><span {...i18n('site.addressShort')}>{t('site.addressShort')}</span> · <span {...i18n('contact.mapSub')}>{t('contact.mapSub')}</span></span>
 							</span>
 							<ArrowUpRight size={18} aria-hidden="true" class="contact__map-arrow" />
 						</a>
 					) : (
 						<p class="contact__map-note">
 							<MapPin size={16} aria-hidden="true" />
-							Картата ще бъде добавена след предоставяне на точен адрес.
+							<span {...i18n('contact.mapNote')}>{t('contact.mapNote')}</span>
 						</p>
 					)
 				}
 			</div>
 
 			<div class="contact__social" data-reveal style="--reveal-delay:4">
-				<LinkedInLink variant="text" label="Свържете се и в LinkedIn" size={18} />
+				<LinkedInLink variant="text" labelKey="nav.linkedinConnect" size={18} />
 			</div>
 		</div>
 

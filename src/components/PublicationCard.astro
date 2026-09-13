@@ -1,37 +1,43 @@
 ---
-/** Карта на публикация – цялата карта води към статията. */
+/** Карта на публикация – цялата карта води към статията. Двуезична (bg + en метаданни). */
 import Clock from '@lucide/astro/icons/clock';
 import ArrowUpRight from '@lucide/astro/icons/arrow-up-right';
-import type { CollectionEntry } from 'astro:content';
+import { t, i18n, l10n, CATEGORY_KEYS } from '../i18n';
+import { readingTime, type PostPair } from '../i18n/publications';
 
 interface Props {
-	post: CollectionEntry<'publications'>;
+	pair: PostPair;
 	index?: number;
 }
-const { post, index = 0 } = Astro.props;
-const fmt = new Intl.DateTimeFormat('bg-BG', { day: 'numeric', month: 'long', year: 'numeric' });
-const words = post.body?.split(/\s+/).filter(Boolean).length ?? 0;
-const readingTime = Math.max(1, Math.round(words / 180));
-const href = `/publikacii/${post.id}`;
+const { pair, index = 0 } = Astro.props;
+const { bg, en, slug } = pair;
+const fmtBg = new Intl.DateTimeFormat('bg-BG', { day: 'numeric', month: 'long', year: 'numeric' });
+const fmtEn = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+const minutes = readingTime(bg.body);
+const categoryKey = CATEGORY_KEYS[bg.data.category] ?? 'civil';
+const title = { bg: bg.data.title, en: en?.data.title ?? bg.data.title };
+const summary = { bg: bg.data.summary, en: en?.data.summary ?? bg.data.summary };
+const dateText = { bg: fmtBg.format(bg.data.date), en: fmtEn.format(bg.data.date) };
+const href = `/publikacii/${slug}`;
 ---
 
 <article class="pub" data-reveal style={`--reveal-delay:${index + 1}`}>
 	<div class="pub__meta">
-		<span class="pub__category">{post.data.category}</span>
-		{post.data.demo && <span class="demo-badge demo-badge--sm">Демо</span>}
+		<span class="pub__category" {...i18n(`publications.categories.${categoryKey}`)}>{t(`publications.categories.${categoryKey}`)}</span>
+		{bg.data.demo && <span class="demo-badge demo-badge--sm" {...i18n('publications.demoShort')}>{t('publications.demoShort')}</span>}
 	</div>
 	<h3 class="pub__title">
 		<a href={href} class="pub__link">
-			{post.data.title}
+			<span {...l10n(title)}>{title.bg}</span>
 			<ArrowUpRight class="pub__arrow" size={20} stroke-width={1.5} aria-hidden="true" />
 		</a>
 	</h3>
-	<p class="pub__summary">{post.data.summary}</p>
+	<p class="pub__summary" {...l10n(summary)}>{summary.bg}</p>
 	<footer class="pub__foot">
-		<time datetime={post.data.date.toISOString().slice(0, 10)}>{fmt.format(post.data.date)}</time>
+		<time datetime={bg.data.date.toISOString().slice(0, 10)} {...l10n(dateText)}>{dateText.bg}</time>
 		<span class="pub__time">
 			<Clock size={14} aria-hidden="true" />
-			{readingTime} мин четене
+			<span {...i18n('publications.readingTime', { n: minutes })}>{t('publications.readingTime', { n: minutes })}</span>
 		</span>
 	</footer>
 </article>

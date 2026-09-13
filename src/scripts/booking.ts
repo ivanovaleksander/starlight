@@ -4,19 +4,19 @@
  * Настройки и интеграция: src/config/booking.ts
  */
 import { BOOKING_CONFIG, getAvailabilityMode, type ServiceKey } from '../config/booking';
+import { t, tList, intlLocale, getLang } from './i18n';
 
 type Slot = { start: string; end: string; label: string };
 type Step = 1 | 2 | 3;
 
 const CFG = BOOKING_CONFIG;
 const TZ = CFG.timezone;
-const LOCALE = CFG.locale;
 
-/* ---------- Дати в часовата зона на кантората ---------- */
+/* ---------- Дати в часовата зона на кантората (форматите следват активния език) ---------- */
 const ymdFmt = new Intl.DateTimeFormat('en-CA', { timeZone: TZ, year: 'numeric', month: '2-digit', day: '2-digit' });
-const timeFmt = new Intl.DateTimeFormat(LOCALE, { timeZone: TZ, hour: '2-digit', minute: '2-digit' });
-const monthFmt = new Intl.DateTimeFormat(LOCALE, { timeZone: 'UTC', month: 'long', year: 'numeric' });
-const longFmt = new Intl.DateTimeFormat(LOCALE, { timeZone: 'UTC', day: 'numeric', month: 'long', year: 'numeric', weekday: 'long' });
+const timeFmt = () => new Intl.DateTimeFormat(intlLocale(), { timeZone: TZ, hour: '2-digit', minute: '2-digit', hour12: false });
+const monthFmt = () => new Intl.DateTimeFormat(intlLocale(), { timeZone: 'UTC', month: 'long', year: 'numeric' });
+const longFmt = () => new Intl.DateTimeFormat(intlLocale(), { timeZone: 'UTC', day: 'numeric', month: 'long', year: 'numeric', weekday: 'long' });
 
 /** Дата (в TZ) като 'YYYY-MM-DD'. */
 const toYmd = (d: Date) => ymdFmt.format(d);
@@ -47,7 +47,7 @@ async function fetchSlots(service: ServiceKey, date: string): Promise<Slot[]> {
 	const res = await fetch(url.toString(), { headers: { Accept: 'application/json' } });
 	if (!res.ok) throw new Error(`Availability API responded with ${res.status}`);
 	const data = (await res.json()) as { slots?: { start: string; end: string }[] };
-	return (data.slots ?? []).map((s) => ({ ...s, label: timeFmt.format(new Date(s.start)) }));
+	return (data.slots ?? []).map((s) => ({ ...s, label: timeFmt().format(new Date(s.start)) }));
 }
 
 /** ДЕМО часове – само при `astro dev` без API (виж getAvailabilityMode). */
@@ -75,30 +75,35 @@ function demoSlots(service: ServiceKey, date: string): Slot[] {
 type FieldEl = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
 const phoneRe = /^\+?[0-9\s().-]{6,20}$/;
 const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-const messages: Record<string, string> = {
-	name: 'Въведете име и фамилия (поне 2 символа).',
-	email: 'Въведете валиден имейл адрес.',
-	phone: 'Въведете валиден телефонен номер.',
-	topic: 'Изберете тема на консултацията.',
-	message: 'Опишете накратко казуса (поне 20 символа).',
-	consent: 'Необходимо е съгласие с политиката за поверителност.',
+const errorKeys: Record<string, string> = {
+	name: 'booking.errName',
+	email: 'booking.errEmail',
+	phone: 'booking.errPhone',
+	topic: 'booking.errTopic',
+	message: 'booking.errMessage',
+	consent: 'booking.errConsent',
 };
+/** Връща ключ на съобщение за грешка или '' – текстът се превежда при показване. */
 function validateField(el: FieldEl): string {
-	if (el instanceof HTMLInputElement && el.type === 'checkbox') return el.checked ? '' : messages.consent;
+	if (el instanceof HTMLInputElement && el.type === 'checkbox') return el.checked ? '' : errorKeys.consent;
 	const v = el.value.trim();
-	if (el.required && !v) return messages[el.name] ?? 'Полето е задължително.';
+	if (el.required && !v) return errorKeys[el.name] ?? 'booking.errRequired';
 	switch (el.name) {
-		case 'name': return v.length < 2 ? messages.name : '';
-		case 'email': return emailRe.test(v) ? '' : messages.email;
-		case 'phone': return phoneRe.test(v) ? '' : messages.phone;
-		case 'message': return v.length < 20 ? messages.message : '';
+		case 'name': return v.length < 2 ? errorKeys.name : '';
+		case 'email': return emailRe.test(v) ? '' : errorKeys.email;
+		case 'phone': return phoneRe.test(v) ? '' : errorKeys.phone;
+		case 'message': return v.length < 20 ? errorKeys.message : '';
 		default: return '';
 	}
 }
-function setError(el: FieldEl, error: string) {
+function setError(el: FieldEl, errorKey: string) {
 	const errEl = document.getElementById(`${el.id}-err`);
-	if (errEl) errEl.textContent = error;
-	if (error) el.setAttribute('aria-invalid', 'true');
+	if (errEl) {
+		errEl.textContent = errorKey ? t(errorKey) : '';
+		if (errorKey) errEl.dataset.i18n = errorKey;
+		else delete errEl.dataset.i18n;
+	}
+	if (errorKey) el.setAttribute('aria-invalid', 'true');
 	else el.removeAttribute('aria-invalid');
 }
 
@@ -130,7 +135,7 @@ export function initBooking() {
 	const calMonth = $<HTMLElement>('[data-calendar-month]')!;
 	const calPrev = $<HTMLButtonElement>('[data-calendar-prev]')!;
 	const calNext = $<HTMLButtonElement>('[data-calendar-next]')!;
-	const calLegend = $<HTMLElement>('.bk-calendar__legend');
+	const calWeekdays = $<HTMLElement>('[data-calendar-weekdays]');
 	const timesSub = $<HTMLElement>('[data-times-sub]')!;
 	const timesList = $<HTMLElement>('[data-times-list]')!;
 	const timesDemo = $<HTMLElement>('[data-times-demo]');
@@ -157,8 +162,6 @@ export function initBooking() {
 		slotsRequest: 0,
 	};
 
-	if (calLegend) calLegend.innerHTML = calLegend.innerHTML.replace('{notice}', String(CFG.minimumNoticeHours));
-
 	const needsTime = () => state.service !== null && CFG.services[state.service].duration !== null;
 	/** В режим без API часът се избира в Microsoft Bookings – датата е достатъчна за продължаване. */
 	const timeRequired = () => needsTime() && mode !== 'bookings-page';
@@ -173,7 +176,7 @@ export function initBooking() {
 			el.dataset.state = st;
 			if (st === 'current') el.setAttribute('aria-current', 'step');
 			else el.removeAttribute('aria-current');
-			if (note) note.textContent = n === 2 && st === 'skipped' ? 'не се изисква' : '';
+			if (note) note.textContent = n === 2 && st === 'skipped' ? t('booking.skipped') : '';
 		}
 	}
 	function showStep(step: Step, focus = true) {
@@ -192,14 +195,16 @@ export function initBooking() {
 		}
 	}
 	function fillSummary() {
-		summaryService.textContent = state.service ? CFG.services[state.service].name : '–';
+		summaryService.textContent = state.service ? t(`booking.services.${state.service}.name`) : '–';
 		if (!needsTime()) {
 			summaryWhenRow.hidden = true;
 			return;
 		}
 		summaryWhenRow.hidden = false;
-		const dateText = state.date ? capitalize(longFmt.format(fromYmd(state.date))) : '–';
-		summaryWhen.textContent = state.slot ? `${dateText}, ${state.slot.label} ч.` : `${dateText} – часът се потвърждава допълнително`;
+		const dateText = state.date ? capitalize(longFmt().format(fromYmd(state.date))) : '–';
+		summaryWhen.textContent = state.slot
+			? t('booking.summaryAt', { date: dateText, time: state.slot.label })
+			: t('booking.summaryTimeTbc', { date: dateText });
 	}
 
 	/* ---------- Стъпка 1 ---------- */
@@ -219,7 +224,8 @@ export function initBooking() {
 		const first = `${state.month}-01`;
 		const daysInMonth = new Date(Date.UTC(y, m, 0)).getUTCDate();
 		const lead = isoWeekday(first) - 1;
-		calMonth.textContent = capitalize(monthFmt.format(fromYmd(first)));
+		calMonth.textContent = capitalize(monthFmt().format(fromYmd(first)));
+		if (calWeekdays) calWeekdays.innerHTML = tList('booking.weekdays').map((d) => `<span>${d}</span>`).join('');
 		calPrev.disabled = state.month <= range.min.slice(0, 7);
 		calNext.disabled = state.month >= range.max.slice(0, 7);
 
@@ -235,7 +241,7 @@ export function initBooking() {
 			const isToday = ymd === range.today;
 			const tabbable = enabled && (selected || (!state.date && !firstEnabledSet) || (state.date && state.date.slice(0, 7) !== state.month && !firstEnabledSet));
 			if (tabbable) firstEnabledSet = true;
-			const label = capitalize(longFmt.format(fromYmd(ymd)));
+			const label = capitalize(longFmt().format(fromYmd(ymd)));
 			cells.push(
 				`<button type="button" class="bk-day${outside ? ' bk-day--outside' : ''}${isToday ? ' bk-day--today' : ''}"` +
 					` data-date="${ymd}" aria-label="${label}${enabled ? '' : ' – недостъпна'}" aria-pressed="${selected}"` +
@@ -289,13 +295,20 @@ export function initBooking() {
 	function showTimesState(name: string) {
 		for (const el of timesStates) el.hidden = el.dataset.timesState !== name;
 	}
+	function refreshTimesSub() {
+		if (!state.date) {
+			timesSub.textContent = t('booking.timesPickDate');
+			return;
+		}
+		const dateText = capitalize(longFmt().format(fromYmd(state.date)));
+		timesSub.textContent = mode === 'bookings-page' ? t('booking.preferredDate', { date: dateText }) : t('booking.chooseTimeFor', { date: dateText });
+		delete timesSub.dataset.i18n;
+	}
 	async function loadTimes() {
 		if (!state.date || !state.service) return;
-		const dateText = capitalize(longFmt.format(fromYmd(state.date)));
-		timesSub.textContent = `Изберете час за ${dateText}`;
+		refreshTimesSub();
 		if (!needsTime()) return;
 		if (mode === 'bookings-page') {
-			timesSub.textContent = `Предпочитана дата: ${dateText}`;
 			showTimesState('external');
 			return;
 		}
@@ -377,7 +390,7 @@ export function initBooking() {
 		}
 		if (firstInvalid) {
 			firstInvalid.focus();
-			status.textContent = 'Моля, коригирайте отбелязаните полета.';
+			status.textContent = t('booking.fixFields');
 			return;
 		}
 
@@ -387,7 +400,7 @@ export function initBooking() {
 			type: 'booking-request',
 			provider: CFG.provider,
 			service,
-			serviceName: CFG.services[service].name,
+			serviceName: t(`booking.services.${service}.name`, undefined, 'bg'),
 			durationMinutes: CFG.services[service].duration,
 			date: state.date,
 			slotStart: state.slot?.start ?? null,
@@ -397,6 +410,8 @@ export function initBooking() {
 			email: String(data.get('email') ?? '').trim(),
 			phone: String(data.get('phone') ?? '').trim(),
 			topic: String(data.get('topic') ?? ''),
+			topicLabel: (() => { const v = String(data.get('topic') ?? ''); return v ? (v === 'other' ? t('services.other') : t(`services.items.${v}.title`)) : ''; })(),
+			language: getLang(),
 			message: String(data.get('message') ?? '').trim(),
 			consent: data.get('consent') === 'on',
 			page: location.href,
@@ -409,7 +424,7 @@ export function initBooking() {
 
 		form.classList.add('is-submitting');
 		submitBtn.setAttribute('aria-disabled', 'true');
-		status.textContent = 'Изпращане…';
+		status.textContent = t('booking.sending');
 		try {
 			if (CFG.createUrl) await postJson(CFG.createUrl, payload);
 			else if (CFG.requestUrl) await postJson(CFG.requestUrl, payload);
@@ -418,11 +433,9 @@ export function initBooking() {
 				console.warn('[HINKOV LAW] Резервацията е в демо режим: няма PUBLIC_BOOKING_CREATE_URL / PUBLIC_CONTACT_ENDPOINT. Данните НЕ са изпратени.', payload);
 				await new Promise((r) => setTimeout(r, 600));
 			}
-			successText.textContent = handOff
-				? 'Заявката е получена. Изберете точния час в Microsoft Bookings – отворихме страницата в нов раздел.'
-				: needsTime() && !CFG.createUrl
-					? 'Заявката е получена. Ще се свържа с вас, за да потвърдим точния час.'
-					: 'Благодаря за доверието. Ще получите потвърждение на посочения имейл или телефон.';
+			const successKey = handOff ? 'booking.successHandOff' : needsTime() && !CFG.createUrl ? 'booking.successTbc' : 'booking.successDefault';
+			successText.dataset.i18n = successKey;
+			successText.textContent = t(successKey);
 			if (successBookings) successBookings.hidden = !needsTime();
 			form.hidden = true;
 			success.hidden = false;
@@ -436,6 +449,16 @@ export function initBooking() {
 			form.classList.remove('is-submitting');
 			submitBtn.removeAttribute('aria-disabled');
 		}
+	});
+
+	// Смяна на езика: пререндира динамичните текстове (календар, часове, обобщение, грешки)
+	document.addEventListener('langchange', () => {
+		renderCalendar();
+		if (state.date) refreshTimesSub();
+		if (state.step === 3) fillSummary();
+		setProgress();
+		for (const el of fields) if (el.getAttribute('aria-invalid') === 'true') setError(el, validateField(el));
+		if (status.textContent) status.textContent = '';
 	});
 
 	// Начално състояние

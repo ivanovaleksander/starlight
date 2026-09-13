@@ -1,211 +1,74 @@
 /**
- * Централна конфигурация на сайта.
- * Всички текстове, връзки и данни, които се показват на страницата, са тук,
- * за да могат да се редактират на едно място.
- *
- * Полетата, отбелязани с `PLACEHOLDER`, все още не са предоставени/потвърдени
- * и се показват на сайта като временни обозначения.
+ * Централна конфигурация на сайта – само НЕтекстови данни (връзки, контакти, ключове).
+ * Всички потребителски текстове са в src/locales/bg.json и src/locales/en.json
+ * и се четат чрез t('ключ') от src/i18n.
  */
-
-export const PLACEHOLDER = 'Предстои да бъде предоставено';
 
 export const site = {
 	brand: 'HINKOV LAW',
-	person: 'Адвокат Тодор Хинков',
-	personShort: 'Тодор Хинков',
+	linkedin: 'https://www.linkedin.com/in/todor-hinkov-4b448a88',
 	/** Данни от Единния адвокатски регистър (Висш адвокатски съвет). */
-	fullName: 'Тодор Красимиров Хинков',
-	barAssociation: 'Адвокатска колегия – Пловдив',
 	registryNumber: '1000137640',
 	/** Първо вписване в регистъра на колегията: 01.07.2013 г. */
 	memberSince: '2013',
-	city: 'Пловдив',
-	country: 'България',
-	tagline: 'Правна защита с ясна стратегия и последователни действия.',
-	subtitle:
-		'Правни консултации и процесуално представителство за граждани и бизнес.',
-	linkedin: 'https://www.linkedin.com/in/todor-hinkov-4b448a88',
-	seo: {
-		title: 'Адвокат Тодор Хинков | HINKOV LAW – Пловдив',
-		description:
-			'Правни консултации и процесуално представителство за граждани и бизнес в Пловдив. Гражданско, административно, търговско и вещно право.',
-		ogImage: '/og.png',
-		locale: 'bg_BG',
-	},
+	seo: { ogImage: '/og.png' },
 	/** Контактни данни (по Единния адвокатски регистър). */
 	contact: {
-		address: 'ул. „Кресна“ № 5, ет. 1, 4000 Пловдив' as string | null,
-		addressLines: ['ул. „Кресна“ № 5, ет. 1', '4000 Пловдив, България'],
 		phone: '+359 896 306 246' as string | null,
 		email: 'todor_hinkov@abv.bg' as string | null,
-		hours: PLACEHOLDER as string | null,
+		/** Работно време – ключ в локалите или null, докато не е предоставено. */
+		hoursKey: null as string | null,
+		postalCode: '4000',
 		/**
 		 * Връзка към картата (отваря се в нов прозорец). Не се вгражда iframe,
 		 * за да не се зареждат бисквитки на трети страни без съгласие.
 		 */
-		mapUrl: 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent('ул. Кресна 5, 4000 Пловдив, България'),
+		mapUrl:
+			'https://www.google.com/maps/search/?api=1&query=' +
+			encodeURIComponent('ул. Кресна 5, 4000 Пловдив, България'),
 		/** Ако бъде решено да се вгради карта, задайте embed URL и обновете Политиката за бисквитки. */
 		mapEmbedUrl: null as string | null,
 	},
 } as const;
 
-export type NavItem = { label: string; href: string; id: string };
+export type NavItem = { key: string; href: string; id: string };
 
 export const nav: NavItem[] = [
-	{ label: 'Начало', href: '#nachalo', id: 'nachalo' },
-	{ label: 'За мен', href: '#za-men', id: 'za-men' },
-	{ label: 'Правни услуги', href: '#uslugi', id: 'uslugi' },
-	{ label: 'Кого представлявам', href: '#kogo-predstavlyavam', id: 'kogo-predstavlyavam' },
-	{ label: 'Публикации', href: '#publikacii', id: 'publikacii' },
-	{ label: 'Контакти', href: '#kontakti', id: 'kontakti' },
+	{ key: 'nav.home', href: '#nachalo', id: 'nachalo' },
+	{ key: 'nav.about', href: '#za-men', id: 'za-men' },
+	{ key: 'nav.services', href: '#uslugi', id: 'uslugi' },
+	{ key: 'nav.audiences', href: '#kogo-predstavlyavam', id: 'kogo-predstavlyavam' },
+	{ key: 'nav.publications', href: '#publikacii', id: 'publikacii' },
+	{ key: 'nav.contact', href: '#kontakti', id: 'kontakti' },
 ];
 
+export type ServiceKey = 'civil' | 'administrative' | 'commercial' | 'property' | 'litigation';
 export type Service = {
-	slug: string;
-	title: string;
-	description: string;
+	key: ServiceKey;
 	icon: 'file-text' | 'building' | 'briefcase' | 'key-round' | 'shield-check';
 };
 
+/** Заглавие: services.items.<key>.title · описание: services.items.<key>.desc */
 export const services: Service[] = [
-	{
-		slug: 'grazhdansko-pravo',
-		title: 'Гражданско право',
-		description:
-			'Договорни отношения, вземания, обезщетения и гражданскоправни спорове.',
-		icon: 'file-text',
-	},
-	{
-		slug: 'administrativno-pravo',
-		title: 'Административно право',
-		description:
-			'Защита и обжалване пред държавни, общински и административни органи.',
-		icon: 'building',
-	},
-	{
-		slug: 'targovsko-pravo',
-		title: 'Търговско право',
-		description:
-			'Правни консултации, договори, търговски отношения и защита на бизнеса.',
-		icon: 'briefcase',
-	},
-	{
-		slug: 'veshtno-pravo',
-		title: 'Вещно право',
-		description:
-			'Собственост, недвижими имоти, съсобственост, делби и вещноправни спорове.',
-		icon: 'key-round',
-	},
-	{
-		slug: 'procesualno-predstavitelstvo',
-		title: 'Процесуално представителство',
-		description:
-			'Представителство и защита пред съдилища, административни органи и други компетентни институции.',
-		icon: 'shield-check',
-	},
+	{ key: 'civil', icon: 'file-text' },
+	{ key: 'administrative', icon: 'building' },
+	{ key: 'commercial', icon: 'briefcase' },
+	{ key: 'property', icon: 'key-round' },
+	{ key: 'litigation', icon: 'shield-check' },
 ];
 
-export const audiences = {
-	citizens: {
-		id: 'za-grazhdani',
-		eyebrow: 'За граждани',
-		title: 'Индивидуален подход към всеки казус.',
-		text: 'Индивидуален подход, предварителна оценка на казуса и ясна информация за възможните правни действия.',
-		points: [
-			'Предварителна оценка на казуса',
-			'Ясна информация за възможните правни действия',
-			'Последователна комуникация на всеки етап',
-		],
-	},
-	business: {
-		id: 'za-biznesa',
-		eyebrow: 'За бизнеса',
-		title: 'Правна подкрепа за уверени бизнес решения.',
-		text: 'Правна подкрепа при договорни отношения, търговски спорове, вземания и взаимодействие с административни органи.',
-		points: [
-			'Договорни отношения и търговски спорове',
-			'Вземания и защита на интересите на дружеството',
-			'Взаимодействие с административни органи',
-		],
-	},
-} as const;
-
-export const processSteps = [
-	{
-		title: 'Първоначален контакт',
-		text: 'Изпращате запитване или се свързвате по телефон. Уточняваме основните факти и документите, които са налични.',
-	},
-	{
-		title: 'Преглед и оценка на казуса',
-		text: 'Преглед на фактите, документите и приложимата правна рамка. Получавате предварителна оценка на възможните действия.',
-	},
-	{
-		title: 'Правна стратегия',
-		text: 'Изготвяне на ясна стратегия с конкретни стъпки, срокове и очаквани резултати, съобразени с вашите цели.',
-	},
-	{
-		title: 'Консултация или процесуално представителство',
-		text: 'Консултация, подготовка на документи или представителство пред съда и компетентните органи – според нуждите на казуса.',
-	},
-];
-
-export type LegalDoc = {
-	key: 'privacy' | 'cookies' | 'legal' | 'accessibility';
-	title: string;
-	href: string;
-	description: string;
-	/** Правна рамка – показва се под заглавието. */
-	basis: string;
-};
+export type LegalKey = 'privacy' | 'cookies' | 'legal' | 'accessibility';
+export type LegalDoc = { key: LegalKey; href: string };
 
 /**
  * Правни документи. Всеки има самостоятелна страница (href) и се показва
  * и в модалния прозорец на началната страница (LegalDialog.astro).
+ * Текстове: legal.docs.<key>.{title,description,basis}
  */
-export const legalDocs: Record<LegalDoc['key'], LegalDoc> = {
-	privacy: {
-		key: 'privacy',
-		title: 'Политика за поверителност',
-		href: '/politika-za-poveritelnost',
-		description:
-			'Как HINKOV LAW – Адвокат Тодор Хинков обработва лични данни съгласно Регламент (ЕС) 2016/679 (GDPR) и Закона за защита на личните данни.',
-		basis:
-			'Регламент (ЕС) 2016/679 (Общ регламент относно защитата на данните – GDPR) и Закон за защита на личните данни (ЗЗЛД).',
-	},
-	cookies: {
-		key: 'cookies',
-		title: 'Политика за бисквитки',
-		href: '/politika-za-biskvitki',
-		description:
-			'Каква информация се съхранява на вашето устройство при посещение на уебсайта на HINKOV LAW и как можете да я управлявате.',
-		basis:
-			'Чл. 4а от Закона за електронните съобщения (ЗЕС), Директива 2002/58/ЕО (ePrivacy) и Регламент (ЕС) 2016/679 (GDPR).',
-	},
-	legal: {
-		key: 'legal',
-		title: 'Правна информация',
-		href: '/pravna-informacia',
-		description:
-			'Идентификация на доставчика, професионални правила и условия за ползване на уебсайта на HINKOV LAW – Адвокат Тодор Хинков.',
-		basis:
-			'Чл. 4 от Закона за електронната търговия (ЗЕТ), Закон за адвокатурата (ЗАдв) и Етичен кодекс на адвоката.',
-	},
-	accessibility: {
-		key: 'accessibility',
-		title: 'Декларация за достъпност',
-		href: '/deklaracia-za-dostapnost',
-		description:
-			'Ангажимент на HINKOV LAW – Адвокат Тодор Хинков за достъпност на уебсайта съгласно насоките WCAG 2.2, ниво AA.',
-		basis:
-			'Доброволна декларация, изготвена по образеца на Директива (ЕС) 2016/2102 и насоките WCAG 2.2 (Web Content Accessibility Guidelines).',
-	},
-};
-
-export const legalList: LegalDoc[] = Object.values(legalDocs);
-
-export const legalLinks = legalList.map((d) => ({ label: d.title, href: d.href, key: d.key }));
-
-export const contactTopics = [
-	...services.map((s) => s.title),
-	'Друго',
+export const legalList: LegalDoc[] = [
+	{ key: 'privacy', href: '/politika-za-poveritelnost' },
+	{ key: 'cookies', href: '/politika-za-biskvitki' },
+	{ key: 'legal', href: '/pravna-informacia' },
+	{ key: 'accessibility', href: '/deklaracia-za-dostapnost' },
 ];
+export const legalDocs = Object.fromEntries(legalList.map((d) => [d.key, d])) as Record<LegalKey, LegalDoc>;

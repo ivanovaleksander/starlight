@@ -6,43 +6,34 @@
 import { getCollection } from 'astro:content';
 import PublicationCard from './PublicationCard.astro';
 import Button from './Button.astro';
+import { t, i18n } from '../i18n';
+import { pairPosts } from '../i18n/publications';
 
-const posts = (await getCollection('publications'))
-	.sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
-	.slice(0, 3);
-const hasDemo = posts.some((p) => p.data.demo);
+const pairs = pairPosts(await getCollection('publications')).slice(0, 3);
+const hasDemo = pairs.some((p) => p.bg.data.demo);
 ---
 
 <section id="publikacii" class="section theme-light publications" aria-labelledby="pub-title">
 	<div class="container">
 		<header class="publications__head">
 			<div>
-				<p class="eyebrow" data-reveal>Публикации</p>
-				<h2 id="pub-title" data-reveal style="--reveal-delay:1">
-					Правни анализи и практични статии.
+				<p class="eyebrow" data-reveal {...i18n('publications.eyebrow')}>{t('publications.eyebrow')}</p>
+				<h2 id="pub-title" data-reveal style="--reveal-delay:1" {...i18n('publications.title')}>
+					{t('publications.title')}
 				</h2>
 			</div>
-			{
-				hasDemo ? (
-					<p class="publications__note" data-reveal style="--reveal-delay:2">
-						<span class="demo-badge">Демо съдържание</span>
-						Примерни статии, които показват оформлението на секцията. Те не представляват
-						публикувани становища на адвокат Хинков.
-					</p>
-				) : (
-					<p class="publications__note" data-reveal style="--reveal-delay:2">
-						Кратки анализи по практични правни въпроси за граждани и бизнес.
-					</p>
-				)
-			}
+			<p class="publications__note" data-reveal style="--reveal-delay:2">
+				{hasDemo && <span class="demo-badge" {...i18n('publications.demoBadge')}>{t('publications.demoBadge')}</span>}
+				<span {...i18n(hasDemo ? 'publications.demoNote' : 'publications.note')}>{t(hasDemo ? 'publications.demoNote' : 'publications.note')}</span>
+			</p>
 		</header>
 
 		<div class="publications__grid">
-			{posts.map((post, i) => <PublicationCard post={post} index={i} />)}
+			{pairs.map((pair, i) => <PublicationCard pair={pair} index={i} />)}
 		</div>
 
 		<div class="publications__more" data-reveal>
-			<Button href="/publikacii" variant="link">Всички публикации</Button>
+			<Button href="/publikacii" variant="link" {...i18n('publications.all')}>{t('publications.all')}</Button>
 		</div>
 	</div>
 </section>

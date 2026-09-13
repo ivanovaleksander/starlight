@@ -6,7 +6,8 @@
  */
 import Button from './Button.astro';
 import Portrait from './Portrait.astro';
-import { site, services } from '../data/site';
+import { services } from '../data/site';
+import { t, i18n, i18nAttr } from '../i18n';
 ---
 
 <section id="nachalo" class="hero theme-dark" aria-labelledby="hero-title">
@@ -57,14 +58,14 @@ import { site, services } from '../data/site';
 
 	<div class="hero__inner container">
 		<div class="hero__content">
-			<p class="eyebrow hero__eyebrow" data-reveal>{site.person.toUpperCase()}</p>
-			<h1 id="hero-title" class="hero__title" data-reveal style="--reveal-delay:1">
-				{site.tagline}
+			<p class="eyebrow hero__eyebrow" data-reveal {...i18n('hero.eyebrow')}>{t('hero.eyebrow')}</p>
+			<h1 id="hero-title" class="hero__title" data-reveal style="--reveal-delay:1" {...i18n('site.tagline')}>
+				{t('site.tagline')}
 			</h1>
-			<p class="hero__sub lead" data-reveal style="--reveal-delay:2">{site.subtitle}</p>
+			<p class="hero__sub lead" data-reveal style="--reveal-delay:2" {...i18n('site.subtitle')}>{t('site.subtitle')}</p>
 			<div class="hero__actions" data-reveal style="--reveal-delay:3">
-				<Button href="#kontakti" variant="primary" arrow>Запази консултация</Button>
-				<Button href="#uslugi" variant="ghost">Разгледай правните услуги</Button>
+				<Button href="#kontakti" variant="primary" arrow {...i18n('hero.ctaPrimary')}>{t('hero.ctaPrimary')}</Button>
+				<Button href="#uslugi" variant="ghost" {...i18n('hero.ctaSecondary')}>{t('hero.ctaSecondary')}</Button>
 			</div>
 		</div>
 
@@ -74,19 +75,19 @@ import { site, services } from '../data/site';
 				<Portrait variant="hero" loading="eager" sizes="(min-width: 56rem) 24rem, 80vw" />
 			</div>
 			<figcaption class="hero__caption">
-				<span>{site.person}</span>
-				<span class="muted">{site.city}, {site.country}</span>
+				<span {...i18n('site.person')}>{t('site.person')}</span>
+				<span class="muted"><span {...i18n('site.city')}>{t('site.city')}</span>, <span {...i18n('site.country')}>{t('site.country')}</span></span>
 			</figcaption>
 		</figure>
 	</div>
 
 	<div class="hero__foot container" data-reveal style="--reveal-delay:4">
-		<ul class="hero__areas" aria-label="Области на практика">
-			{services.map((s) => <li>{s.title}</li>)}
+		<ul class="hero__areas" {...i18nAttr({ 'aria-label': 'hero.areasLabel' })}>
+			{services.map((s) => <li {...i18n(`services.items.${s.key}.title`)}>{t(`services.items.${s.key}.title`)}</li>)}
 		</ul>
-		<a href="#uslugi" class="hero__scroll" aria-label="Превърти до правните услуги">
+		<a href="#uslugi" class="hero__scroll" {...i18nAttr({ 'aria-label': 'hero.scrollAria' })}>
 			<span class="hero__scroll-line"></span>
-			<span>Разгледайте</span>
+			<span {...i18n('hero.scroll')}>{t('hero.scroll')}</span>
 		</a>
 	</div>
 </section>

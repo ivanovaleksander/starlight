@@ -206,6 +206,14 @@ button {
 	color: var(--navy-950);
 }
 
+/* ---------- Двуезично съдържание ----------
+   Блоковете [data-lang] съдържат дълги текстове и на двата езика (статии, правни документи);
+   показва се само активният език според html[lang]. */
+html[lang='bg'] [data-lang='en'],
+html[lang='en'] [data-lang='bg'] {
+	display: none !important;
+}
+
 /* ---------- Помощни класове ---------- */
 .container {
 	width: min(100% - 2 * var(--gutter), var(--container));

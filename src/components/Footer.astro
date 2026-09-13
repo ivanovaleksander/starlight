@@ -1,11 +1,14 @@
 ---
 import LinkedInLink from './LinkedInLink.astro';
 import Logo from './Logo.astro';
-import { site, nav, legalLinks, PLACEHOLDER } from '../data/site';
+import { site, nav, legalList } from '../data/site';
+import { t, i18n, i18nAttr } from '../i18n';
 
 const year = new Date().getFullYear();
 const c = site.contact;
-const show = (v: string | null) => v && v !== PLACEHOLDER;
+const tel = c.phone ? `tel:${c.phone.replace(/\s+/g, '')}` : null;
+/** Извън началната страница котвите водят към началото. */
+const prefix = Astro.url.pathname.replace(/\/$/, '') !== '' ? '/' : '';
 ---
 
 <footer class="footer theme-dark" aria-labelledby="footer-title">
@@ -14,19 +17,19 @@ const show = (v: string | null) => v && v !== PLACEHOLDER;
 			<div class="footer__brand">
 				<Logo size={48} class="footer__mark" />
 				<p id="footer-title" class="footer__name">{site.brand}</p>
-				<p class="footer__person">{site.person}</p>
-				<p class="footer__tag muted">{site.tagline}</p>
+				<p class="footer__person" {...i18n('site.person')}>{t('site.person')}</p>
+				<p class="footer__tag muted" {...i18n('site.tagline')}>{t('site.tagline')}</p>
 				<LinkedInLink variant="icon" size={18} class="footer__li" />
 			</div>
 
-			<nav class="footer__col" aria-label="Навигация в долната част">
-				<p class="footer__heading">Навигация</p>
+			<nav class="footer__col" {...i18nAttr({ 'aria-label': 'footer.navAria' })}>
+				<p class="footer__heading" {...i18n('footer.navigation')}>{t('footer.navigation')}</p>
 				<ul>
 					{
 						nav.map((item) => (
 							<li>
-								<a href={item.href} class="u-link footer__link">
-									{item.label}
+								<a href={`${prefix}${item.href}`} class="u-link footer__link" {...i18n(item.key)}>
+									{t(item.key)}
 								</a>
 							</li>
 						))
@@ -35,56 +38,30 @@ const show = (v: string | null) => v && v !== PLACEHOLDER;
 			</nav>
 
 			<div class="footer__col">
-				<p class="footer__heading">Контакти</p>
+				<p class="footer__heading" {...i18n('footer.contacts')}>{t('footer.contacts')}</p>
 				<ul class="footer__contacts">
-					{
-						show(c.address) ? (
-							c.addressLines.map((line) => <li>{line}</li>)
-						) : (
-							<>
-								<li>{site.city}, {site.country}</li>
-								<li><span class="placeholder">Адрес – {PLACEHOLDER.toLowerCase()}</span></li>
-							</>
-						)
-					}
+					<li {...i18n('site.addressLine1')}>{t('site.addressLine1')}</li>
+					<li {...i18n('site.addressLine2')}>{t('site.addressLine2')}</li>
 					<li>
-						{
-							show(c.phone) ? (
-								<a href={`tel:${c.phone!.replace(/\s+/g, '')}`} class="u-link footer__link">
-									{c.phone}
-								</a>
-							) : (
-								<span class="placeholder">Телефон – {PLACEHOLDER.toLowerCase()}</span>
-							)
-						}
+						{tel ? <a href={tel} class="u-link footer__link">{c.phone}</a> : <span class="placeholder" {...i18n('footer.phonePending')}>{t('footer.phonePending')}</span>}
 					</li>
 					<li>
-						{
-							show(c.email) ? (
-								<a href={`mailto:${c.email}`} class="u-link footer__link">
-									{c.email}
-								</a>
-							) : (
-								<span class="placeholder">Имейл – {PLACEHOLDER.toLowerCase()}</span>
-							)
-						}
+						{c.email ? <a href={`mailto:${c.email}`} class="u-link footer__link">{c.email}</a> : <span class="placeholder" {...i18n('footer.emailPending')}>{t('footer.emailPending')}</span>}
 					</li>
 					<li>
-						<a href={site.linkedin} target="_blank" rel="noopener noreferrer" class="u-link footer__link">
-							LinkedIn
-						</a>
+						<a href={site.linkedin} target="_blank" rel="noopener noreferrer" class="u-link footer__link">LinkedIn</a>
 					</li>
 				</ul>
 			</div>
 
 			<div class="footer__col">
-				<p class="footer__heading">Правна информация</p>
+				<p class="footer__heading" {...i18n('footer.legal')}>{t('footer.legal')}</p>
 				<ul>
 					{
-						legalLinks.map((l) => (
+						legalList.map((l) => (
 							<li>
-								<a href={l.href} class="u-link footer__link" data-legal-open={l.key}>
-									{l.label}
+								<a href={l.href} class="u-link footer__link" data-legal-open={l.key} {...i18n(`legal.docs.${l.key}.title`)}>
+									{t(`legal.docs.${l.key}.title`)}
 								</a>
 							</li>
 						))
@@ -94,8 +71,8 @@ const show = (v: string | null) => v && v !== PLACEHOLDER;
 		</div>
 
 		<div class="footer__bottom">
-			<p>© {year} {site.brand} · {site.person}. Всички права запазени.</p>
-			<p class="muted">Изпращането на запитване не създава автоматично отношения между адвокат и клиент.</p>
+			<p>© {year} {site.brand} · <span {...i18n('site.person')}>{t('site.person')}</span>. <span {...i18n('footer.rights')}>{t('footer.rights')}</span></p>
+			<p class="muted" {...i18n('footer.disclaimer')}>{t('footer.disclaimer')}</p>
 		</div>
 	</div>
 </footer>

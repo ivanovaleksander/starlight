@@ -19,6 +19,7 @@ const {
 	type = 'button',
 	class: className = '',
 	arrow = variant === 'link',
+	'data-i18n': i18nKey,
 	...rest
 } = Astro.props;
 const Tag = href ? 'a' : 'button';
@@ -30,7 +31,7 @@ const Tag = href ? 'a' : 'button';
 	class:list={['btn', `btn--${variant}`, className]}
 	{...rest}
 >
-	<span class="btn__label"><slot /></span>
+	<span class="btn__label" data-i18n={i18nKey}><slot /></span>
 	{arrow && <ArrowRight class="btn__icon" size={18} aria-hidden="true" />}
 </Tag>
 

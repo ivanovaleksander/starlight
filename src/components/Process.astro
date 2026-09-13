@@ -1,26 +1,26 @@
 ---
 /** Начин на работа – четири етапа, свързани с анимирана линия. */
-import { processSteps } from '../data/site';
+import { t, i18n } from '../i18n';
+
+const steps = ['s1', 's2', 's3', 's4'];
 ---
 
 <section class="section theme-dark process" aria-labelledby="process-title">
 	<div class="container">
 		<header class="process__head">
 			<div>
-				<p class="eyebrow" data-reveal>Начин на работа</p>
-				<h2 id="process-title" data-reveal style="--reveal-delay:1">
-					Ясен процес. Последователни стъпки.
+				<p class="eyebrow" data-reveal {...i18n('process.eyebrow')}>{t('process.eyebrow')}</p>
+				<h2 id="process-title" data-reveal style="--reveal-delay:1" {...i18n('process.title')}>
+					{t('process.title')}
 				</h2>
 			</div>
-			<p class="lead" data-reveal style="--reveal-delay:2">
-				Всеки казус преминава през едни и същи ясни етапи – така знаете какво следва и защо.
-			</p>
+			<p class="lead" data-reveal style="--reveal-delay:2" {...i18n('process.lead')}>{t('process.lead')}</p>
 		</header>
 
 		<ol class="steps" data-reveal data-steps>
 			<span class="steps__track" aria-hidden="true"><span class="steps__progress"></span></span>
 			{
-				processSteps.map((step, i) => (
+				steps.map((step, i) => (
 					<li class="step" style={`--i:${i}`}>
 						<span class="step__node" aria-hidden="true">
 							<span class="step__dot" />
@@ -28,8 +28,8 @@ import { processSteps } from '../data/site';
 						<span class="step__num" aria-hidden="true">
 							0{i + 1}
 						</span>
-						<h3 class="step__title">{step.title}</h3>
-						<p class="step__text">{step.text}</p>
+						<h3 class="step__title" {...i18n(`process.${step}.title`)}>{t(`process.${step}.title`)}</h3>
+						<p class="step__text" {...i18n(`process.${step}.text`)}>{t(`process.${step}.text`)}</p>
 					</li>
 				))
 			}

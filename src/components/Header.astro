@@ -1,36 +1,40 @@
 ---
 /**
- * Фиксиран header с лого, навигация, LinkedIn икона, основен CTA
- * и мобилно меню с плавно отваряне.
+ * Фиксиран header с лого, навигация, превключвател на езика, LinkedIn икона,
+ * основен CTA и мобилно меню с плавно отваряне.
  */
 import Menu from '@lucide/astro/icons/menu';
 import X from '@lucide/astro/icons/x';
 import Button from './Button.astro';
 import LinkedInLink from './LinkedInLink.astro';
+import LanguageSwitcher from './LanguageSwitcher.astro';
 import Logo from './Logo.astro';
 import { nav, site } from '../data/site';
+import { t, i18n, i18nAttr } from '../i18n';
 
 /** Извън началната страница header-ът винаги е с плътен тъмен фон (няма тъмен hero под него). */
 const solid = Astro.url.pathname.replace(/\/$/, '') !== '';
+/** Извън началната страница котвите водят към началото. */
+const prefix = solid ? '/' : '';
 ---
 
 <header class:list={['header', 'theme-dark', solid && 'is-solid']} data-header>
 	<div class="header__inner container">
-		<a href="#nachalo" class="brand" aria-label={`${site.brand} – начало`}>
+		<a href={`${prefix}#nachalo`} class="brand" {...i18nAttr({ 'aria-label': 'nav.brandHome' })}>
 			<Logo size={40} class="brand__mark" />
 			<span class="brand__text">
 				<span class="brand__name">{site.brand}</span>
-				<span class="brand__sub">{site.person}</span>
+				<span class="brand__sub" {...i18n('site.person')}>{t('site.person')}</span>
 			</span>
 		</a>
 
-		<nav class="nav" aria-label="Основна навигация">
+		<nav class="nav" {...i18nAttr({ 'aria-label': 'nav.main' })}>
 			<ul class="nav__list">
 				{
 					nav.map((item) => (
 						<li>
-							<a href={item.href} class="nav__link" data-nav-link={item.id}>
-								{item.label}
+							<a href={`${prefix}${item.href}`} class="nav__link" data-nav-link={item.id} {...i18n(item.key)}>
+								{t(item.key)}
 							</a>
 						</li>
 					))
@@ -39,14 +43,15 @@ const solid = Astro.url.pathname.replace(/\/$/, '') !== '';
 		</nav>
 
 		<div class="header__actions">
+			<LanguageSwitcher class="header__lang" />
 			<LinkedInLink variant="icon" size={18} class="header__li" />
-			<Button href="#kontakti" variant="primary" class="header__cta">Запази консултация</Button>
+			<Button href={`${prefix}#kontakti`} variant="primary" class="header__cta" {...i18n('nav.cta')}>{t('nav.cta')}</Button>
 			<button
 				class="nav-toggle"
 				type="button"
 				aria-expanded="false"
 				aria-controls="mobile-menu"
-				aria-label="Отвори менюто"
+				{...i18nAttr({ 'aria-label': 'nav.openMenu' })}
 				data-nav-toggle
 			>
 				<Menu class="nav-toggle__open" size={24} aria-hidden="true" />
@@ -56,22 +61,23 @@ const solid = Astro.url.pathname.replace(/\/$/, '') !== '';
 	</div>
 
 	<div id="mobile-menu" class="mobile-menu" data-mobile-menu inert>
-		<nav aria-label="Мобилна навигация" class="mobile-menu__inner container">
+		<nav {...i18nAttr({ 'aria-label': 'nav.mobile' })} class="mobile-menu__inner container">
 			<ul class="mobile-menu__list">
 				{
 					nav.map((item, i) => (
 						<li style={`--i:${i}`}>
-							<a href={item.href} class="mobile-menu__link" data-nav-link={item.id}>
+							<a href={`${prefix}${item.href}`} class="mobile-menu__link" data-nav-link={item.id}>
 								<span class="mobile-menu__index">0{i + 1}</span>
-								{item.label}
+								<span {...i18n(item.key)}>{t(item.key)}</span>
 							</a>
 						</li>
 					))
 				}
 			</ul>
 			<div class="mobile-menu__footer" style={`--i:${nav.length}`}>
-				<Button href="#kontakti" variant="primary">Запази консултация</Button>
-				<LinkedInLink variant="button" label="LinkedIn профил" size={18} />
+				<LanguageSwitcher />
+				<Button href={`${prefix}#kontakti`} variant="primary" {...i18n('nav.cta')}>{t('nav.cta')}</Button>
+				<LinkedInLink variant="button" labelKey="nav.linkedinProfile" size={18} />
 			</div>
 		</nav>
 	</div>
@@ -123,7 +129,7 @@ const solid = Astro.url.pathname.replace(/\/$/, '') !== '';
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		gap: 2rem;
+		gap: 1.5rem;
 	}
 
 	.brand {
@@ -165,7 +171,7 @@ const solid = Astro.url.pathname.replace(/\/$/, '') !== '';
 	}
 	.nav__list {
 		display: flex;
-		gap: clamp(1rem, 1.8vw, 1.75rem);
+		gap: clamp(0.85rem, 1.5vw, 1.5rem);
 	}
 	.nav__link {
 		position: relative;
@@ -174,6 +180,7 @@ const solid = Astro.url.pathname.replace(/\/$/, '') !== '';
 		font-size: var(--text-sm);
 		font-weight: 500;
 		color: var(--cream-2);
+		white-space: nowrap;
 		transition: color var(--dur-fast) var(--ease-out);
 	}
 	.nav__link::after {
@@ -203,7 +210,7 @@ const solid = Astro.url.pathname.replace(/\/$/, '') !== '';
 	.header__actions {
 		display: flex;
 		align-items: center;
-		gap: 0.75rem;
+		gap: 0.6rem;
 	}
 	.header__actions .header__li,
 	.header__actions .header__cta {
@@ -287,7 +294,7 @@ const solid = Astro.url.pathname.replace(/\/$/, '') !== '';
 		padding: 0.85rem 0;
 		border-bottom: 1px solid var(--line);
 		font-family: var(--font-display);
-		font-size: clamp(1.6rem, 6vw, 2.2rem);
+		font-size: clamp(1.5rem, 5.5vw, 2.1rem);
 		line-height: 1.1;
 		transition: color var(--dur-fast) var(--ease-out);
 	}
@@ -305,9 +312,32 @@ const solid = Astro.url.pathname.replace(/\/$/, '') !== '';
 	.mobile-menu__footer {
 		display: flex;
 		flex-wrap: wrap;
+		align-items: center;
 		gap: 0.75rem;
 	}
 
+	/* Тесни екрани: компактен бранд и превключвател само с флагове, за да се събере всичко на един ред */
+	@media (max-width: 47.99rem) {
+		.brand__sub {
+			display: none;
+		}
+		.brand__name {
+			font-size: 1.1rem;
+			letter-spacing: 0.12em;
+		}
+		.brand {
+			gap: 0.6rem;
+		}
+		.header__actions {
+			gap: 0.45rem;
+		}
+		.header__lang :global(.lang__btn span) {
+			display: none;
+		}
+		.header__lang :global(.lang__btn) {
+			padding: 0.4rem 0.45rem;
+		}
+	}
 	@media (min-width: 64rem) {
 		.nav {
 			display: block;
@@ -321,7 +351,7 @@ const solid = Astro.url.pathname.replace(/\/$/, '') !== '';
 			display: none;
 		}
 	}
-	@media (min-width: 64rem) and (max-width: 76rem) {
+	@media (min-width: 64rem) and (max-width: 80rem) {
 		.header__actions .header__cta {
 			display: none;
 		}

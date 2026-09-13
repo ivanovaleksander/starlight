@@ -1,15 +1,12 @@
 ---
 /** Индикатор на трите стъпки. Състоянието се управлява от src/scripts/booking.ts. */
 import Check from '@lucide/astro/icons/check';
+import { t, i18n, i18nAttr } from '../../i18n';
 
-const steps = [
-	{ n: 1, label: 'Вид консултация' },
-	{ n: 2, label: 'Дата и час' },
-	{ n: 3, label: 'Вашите данни' },
-];
+const steps = [1, 2, 3].map((n) => ({ n, key: `booking.step${n}` }));
 ---
 
-<ol class="bk-progress" aria-label="Стъпки на резервацията">
+<ol class="bk-progress" {...i18nAttr({ 'aria-label': 'booking.stepsAria' })}>
 	{
 		steps.map((s) => (
 			<li class="bk-progress__step" data-progress-step={s.n} data-state={s.n === 1 ? 'current' : 'upcoming'}>
@@ -18,7 +15,7 @@ const steps = [
 					<Check class="bk-progress__check" size={16} stroke-width={2.2} aria-hidden="true" />
 				</span>
 				<span class="bk-progress__label">
-					{s.label}
+					<span {...i18n(s.key)}>{t(s.key)}</span>
 					<span class="bk-progress__note" data-progress-note />
 				</span>
 			</li>

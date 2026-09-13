@@ -7,21 +7,19 @@ import ArrowUpRight from '@lucide/astro/icons/arrow-up-right';
 import ServiceIcon from './ServiceIcon.astro';
 import Button from './Button.astro';
 import { services } from '../data/site';
+import { t, i18n } from '../i18n';
 ---
 
 <section id="uslugi" class="section theme-dark practice" aria-labelledby="practice-title">
 	<div class="container">
 		<header class="practice__head">
 			<div>
-				<p class="eyebrow" data-reveal>Правни услуги</p>
-				<h2 id="practice-title" data-reveal style="--reveal-delay:1">
-					Области на практика с ясен фокус.
+				<p class="eyebrow" data-reveal {...i18n('services.eyebrow')}>{t('services.eyebrow')}</p>
+				<h2 id="practice-title" data-reveal style="--reveal-delay:1" {...i18n('services.title')}>
+					{t('services.title')}
 				</h2>
 			</div>
-			<p class="lead" data-reveal style="--reveal-delay:2">
-				Правна помощ в ключовите области на гражданското, административното, търговското и
-				вещното право – с консултация или процесуално представителство според нуждите на казуса.
-			</p>
+			<p class="lead" data-reveal style="--reveal-delay:2" {...i18n('services.lead')}>{t('services.lead')}</p>
 		</header>
 
 		<ol class="practice__list" data-reveal style="--reveal-delay:2">
@@ -31,8 +29,9 @@ import { services } from '../data/site';
 						<a
 							href="#kontakti"
 							class="practice__link"
-							data-topic={s.title}
-							aria-label={`${s.title} – изпратете запитване`}
+							data-topic={s.key}
+							aria-label={t('services.inquiryAria', { title: t(`services.items.${s.key}.title`) })}
+							data-i18n-aria-service={s.key}
 						>
 							<span class="practice__index" aria-hidden="true">
 								0{i + 1}
@@ -41,8 +40,8 @@ import { services } from '../data/site';
 								<ServiceIcon name={s.icon} size={22} />
 							</span>
 							<span class="practice__body">
-								<h3 class="practice__title">{s.title}</h3>
-								<p class="practice__desc">{s.description}</p>
+								<h3 class="practice__title" {...i18n(`services.items.${s.key}.title`)}>{t(`services.items.${s.key}.title`)}</h3>
+								<p class="practice__desc" {...i18n(`services.items.${s.key}.desc`)}>{t(`services.items.${s.key}.desc`)}</p>
 							</span>
 							<span class="practice__arrow" aria-hidden="true">
 								<ArrowUpRight size={22} stroke-width={1.5} />
@@ -54,8 +53,8 @@ import { services } from '../data/site';
 		</ol>
 
 		<div class="practice__cta" data-reveal>
-			<p class="muted">Не сте сигурни към коя област спада вашият казус?</p>
-			<Button href="#kontakti" variant="link">Опишете накратко ситуацията</Button>
+			<p class="muted" {...i18n('services.ctaQuestion')}>{t('services.ctaQuestion')}</p>
+			<Button href="#kontakti" variant="link" {...i18n('services.ctaLink')}>{t('services.ctaLink')}</Button>
 		</div>
 	</div>
 </section>

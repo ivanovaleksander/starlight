@@ -4,6 +4,7 @@
  * Отваря се от връзките с data-legal-open="<key>" (footer, контактна форма).
  * Използва нативния <dialog>: Escape затваря, фокусът остава вътре.
  * Всеки документ има и самостоятелна страница (href) – за директни връзки и без JavaScript.
+ * Двуезичен: и двете версии на всеки документ се рендират, показва се активният език.
  */
 import X from '@lucide/astro/icons/x';
 import ArrowUpRight from '@lucide/astro/icons/arrow-up-right';
@@ -12,13 +13,18 @@ import PrivacyPolicy from './legal/PrivacyPolicy.astro';
 import CookiePolicy from './legal/CookiePolicy.astro';
 import LegalNotice from './legal/LegalNotice.astro';
 import AccessibilityStatement from './legal/AccessibilityStatement.astro';
+import PrivacyPolicyEn from './legal/en/PrivacyPolicy.astro';
+import CookiePolicyEn from './legal/en/CookiePolicy.astro';
+import LegalNoticeEn from './legal/en/LegalNotice.astro';
+import AccessibilityStatementEn from './legal/en/AccessibilityStatement.astro';
 import { legalList } from '../data/site';
+import { t, i18n, i18nHtml, i18nAttr } from '../i18n';
 
 const bodies = {
-	privacy: PrivacyPolicy,
-	cookies: CookiePolicy,
-	legal: LegalNotice,
-	accessibility: AccessibilityStatement,
+	privacy: { bg: PrivacyPolicy, en: PrivacyPolicyEn },
+	cookies: { bg: CookiePolicy, en: CookiePolicyEn },
+	legal: { bg: LegalNotice, en: LegalNoticeEn },
+	accessibility: { bg: AccessibilityStatement, en: AccessibilityStatementEn },
 };
 ---
 
@@ -28,27 +34,22 @@ const bodies = {
 			<div class="ldlg__head-main">
 				<Logo size={36} class="ldlg__mark" />
 				<div>
-					<p class="eyebrow">Правна информация</p>
-					<h2 id="ldlg-title" class="ldlg__title" data-legal-title>Документ</h2>
+					<p class="eyebrow" {...i18n('legal.eyebrow')}>{t('legal.eyebrow')}</p>
+					<h2 id="ldlg-title" class="ldlg__title" data-legal-title>{t('legal.dialogTitle')}</h2>
 				</div>
 			</div>
-			<button type="button" class="ldlg__close" data-legal-close aria-label="Затвори прозореца">
+			<button type="button" class="ldlg__close" data-legal-close {...i18nAttr({ 'aria-label': 'legal.closeAria' })}>
 				<X size={22} aria-hidden="true" />
 			</button>
 		</header>
 
-		<nav class="ldlg__nav" aria-label="Правни документи">
+		<nav class="ldlg__nav" {...i18nAttr({ 'aria-label': 'legal.dialogNav' })}>
 			<ul>
 				{
 					legalList.map((d) => (
 						<li>
-							<button
-								type="button"
-								class="ldlg__tab"
-								data-legal-tab={d.key}
-								aria-pressed="false"
-							>
-								{d.title}
+							<button type="button" class="ldlg__tab" data-legal-tab={d.key} aria-pressed="false" {...i18n(`legal.docs.${d.key}.title`)}>
+								{t(`legal.docs.${d.key}.title`)}
 							</button>
 						</li>
 					))
@@ -59,18 +60,17 @@ const bodies = {
 		<div class="ldlg__scroll" data-legal-scroll tabindex="0">
 			{
 				legalList.map((d) => {
-					const Body = bodies[d.key];
+					const Bg = bodies[d.key].bg;
+					const En = bodies[d.key].en;
 					return (
 						<article class="ldlg__doc" data-legal-doc={d.key} hidden>
-							<p class="ldlg__basis">{d.basis}</p>
-							<p class="ldlg__notice">
-								<strong>Чернова за преглед.</strong> Полетата в
-								<span class="placeholder">[квадратни скоби]</span> се попълват с реални данни
-								преди публикуване. Последна актуализация:
-								<span class="placeholder">[дата]</span>.
-							</p>
-							<div class="prose">
-								<Body />
+							<p class="ldlg__basis" {...i18n(`legal.docs.${d.key}.basis`)}>{t(`legal.docs.${d.key}.basis`)}</p>
+							<p class="ldlg__notice" {...i18nHtml('legal.draftShort')} set:html={t('legal.draftShort')} />
+							<div class="prose" data-lang="bg" lang="bg">
+								<Bg />
+							</div>
+							<div class="prose" data-lang="en" lang="en">
+								<En />
 							</div>
 						</article>
 					);
@@ -80,9 +80,9 @@ const bodies = {
 
 		<footer class="ldlg__foot">
 			<a href="/pravna-informacia" class="ldlg__page-link" data-legal-page-link>
-				Отвори като отделна страница <ArrowUpRight size={16} aria-hidden="true" />
+				<span {...i18n('legal.openPage')}>{t('legal.openPage')}</span> <ArrowUpRight size={16} aria-hidden="true" />
 			</a>
-			<button type="button" class="ldlg__done" data-legal-close>Затвори</button>
+			<button type="button" class="ldlg__done" data-legal-close {...i18n('legal.close')}>{t('legal.close')}</button>
 		</footer>
 	</div>
 </dialog>

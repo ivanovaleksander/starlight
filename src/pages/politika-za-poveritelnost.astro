@@ -1,9 +1,10 @@
 ---
 import LegalLayout from '../layouts/LegalLayout.astro';
 import PrivacyPolicy from '../components/legal/PrivacyPolicy.astro';
-import { legalDocs } from '../data/site';
+import PrivacyPolicyEn from '../components/legal/en/PrivacyPolicy.astro';
 ---
 
-<LegalLayout {...legalDocs.privacy}>
+<LegalLayout docKey="privacy">
 	<PrivacyPolicy />
+	<PrivacyPolicyEn slot="en" />
 </LegalLayout>

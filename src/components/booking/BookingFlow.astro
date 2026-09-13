@@ -17,72 +17,71 @@ import BookingCalendar from './BookingCalendar.astro';
 import AvailableTimes from './AvailableTimes.astro';
 import BookingDetailsForm from './BookingDetailsForm.astro';
 import { BOOKING_CONFIG } from '../../config/booking';
+import { t, i18n, i18nAttr } from '../../i18n';
 ---
 
 <section class="bk" data-booking aria-labelledby="bk-title">
 	<header class="bk__head">
-		<h3 id="bk-title" class="bk__title">Запазете консултация</h3>
-		<p class="bk__sub">Изберете удобен формат, дата и час.</p>
+		<h3 id="bk-title" class="bk__title" {...i18n('booking.title')}>{t('booking.title')}</h3>
+		<p class="bk__sub" {...i18n('booking.sub')}>{t('booking.sub')}</p>
 	</header>
 
 	<form class="bk__form" data-booking-form novalidate>
 		<!-- Стъпка 1 -->
 		<div class="bk__panel" data-step-panel="1">
-			<h4 class="bk__step-title" tabindex="-1" data-step-title>Стъпка 1 от 3: вид консултация</h4>
+			<h4 class="bk__step-title" tabindex="-1" data-step-title {...i18n('booking.step1Title')}>{t('booking.step1Title')}</h4>
 			<ServiceSelector />
 			<div class="bk__actions">
 				<span></span>
 				<button type="button" class="bk-btn bk-btn--primary" data-next disabled>
-					Продължи <ArrowRight size={18} stroke-width={1.7} aria-hidden="true" />
+					<span {...i18n('booking.next')}>{t('booking.next')}</span> <ArrowRight size={18} stroke-width={1.7} aria-hidden="true" />
 				</button>
 			</div>
 		</div>
 
 		<!-- Стъпка 2 -->
 		<div class="bk__panel" data-step-panel="2" hidden>
-			<h4 class="bk__step-title" tabindex="-1" data-step-title>Стъпка 2 от 3: дата и час</h4>
+			<h4 class="bk__step-title" tabindex="-1" data-step-title {...i18n('booking.step2Title')}>{t('booking.step2Title')}</h4>
 			<div class="bk__schedule">
 				<BookingCalendar />
 				<AvailableTimes />
 			</div>
 			<div class="bk__actions">
 				<button type="button" class="bk-btn bk-btn--ghost" data-back>
-					<ArrowLeft size={18} stroke-width={1.7} aria-hidden="true" /> Назад
+					<ArrowLeft size={18} stroke-width={1.7} aria-hidden="true" /> <span {...i18n('booking.back')}>{t('booking.back')}</span>
 				</button>
 				<button type="button" class="bk-btn bk-btn--primary" data-next disabled>
-					Продължи <ArrowRight size={18} stroke-width={1.7} aria-hidden="true" />
+					<span {...i18n('booking.next')}>{t('booking.next')}</span> <ArrowRight size={18} stroke-width={1.7} aria-hidden="true" />
 				</button>
 			</div>
 		</div>
 
 		<!-- Стъпка 3 -->
 		<div class="bk__panel" data-step-panel="3" hidden>
-			<h4 class="bk__step-title" tabindex="-1" data-step-title>Стъпка 3 от 3: вашите данни</h4>
-			<dl class="bk-summary" data-summary aria-label="Обобщение на резервацията">
-				<div><dt>Вид</dt><dd data-summary-service>–</dd></div>
-				<div data-summary-when-row><dt>Дата и час</dt><dd data-summary-when>–</dd></div>
+			<h4 class="bk__step-title" tabindex="-1" data-step-title {...i18n('booking.step3Title')}>{t('booking.step3Title')}</h4>
+			<dl class="bk-summary" data-summary {...i18nAttr({ 'aria-label': 'booking.summaryAria' })}>
+				<div><dt {...i18n('booking.summaryType')}>{t('booking.summaryType')}</dt><dd data-summary-service>–</dd></div>
+				<div data-summary-when-row><dt {...i18n('booking.summaryWhen')}>{t('booking.summaryWhen')}</dt><dd data-summary-when>–</dd></div>
 			</dl>
 			<BookingDetailsForm />
 			<div class="bk__actions">
 				<button type="button" class="bk-btn bk-btn--ghost" data-back>
-					<ArrowLeft size={18} stroke-width={1.7} aria-hidden="true" /> Назад
+					<ArrowLeft size={18} stroke-width={1.7} aria-hidden="true" /> <span {...i18n('booking.back')}>{t('booking.back')}</span>
 				</button>
-				<button type="submit" class="bk-btn bk-btn--primary" data-submit>
-					Потвърди резервацията
+				<button type="submit" class="bk-btn bk-btn--primary" data-submit {...i18n('booking.submit')}>
+					{t('booking.submit')}
 				</button>
 			</div>
 			<p class="bk__status" data-booking-status role="status" aria-live="polite"></p>
-			<p class="bk__disclaimer">
-				Изпращането на резервация не създава автоматично отношения между адвокат и клиент.
-			</p>
+			<p class="bk__disclaimer" {...i18n('booking.disclaimer')}>{t('booking.disclaimer')}</p>
 		</div>
 	</form>
 
 	<!-- Успех -->
 	<div class="bk__done" data-booking-success hidden tabindex="-1">
 		<CircleCheck size={40} stroke-width={1.4} aria-hidden="true" />
-		<h4>Заявката е изпратена.</h4>
-		<p data-success-text>Благодаря за доверието. Ще получите потвърждение на посочения имейл или телефон.</p>
+		<h4 {...i18n('booking.successTitle')}>{t('booking.successTitle')}</h4>
+		<p data-success-text {...i18n('booking.successDefault')}>{t('booking.successDefault')}</p>
 		{
 			BOOKING_CONFIG.bookingPageUrl && (
 				<a
@@ -92,19 +91,17 @@ import { BOOKING_CONFIG } from '../../config/booking';
 					rel="noopener noreferrer"
 					data-success-bookings
 				>
-					Избери точен час в Microsoft Bookings <ExternalLink size={16} aria-hidden="true" />
+					<span {...i18n('booking.successBookings')}>{t('booking.successBookings')}</span> <ExternalLink size={16} aria-hidden="true" />
 				</a>
 			)
 		}
-		<p class="bk__disclaimer">
-			Изпращането на резервация не създава автоматично отношения между адвокат и клиент.
-		</p>
+		<p class="bk__disclaimer" {...i18n('booking.disclaimer')}>{t('booking.disclaimer')}</p>
 	</div>
 
 	<!-- Грешка при изпращане -->
 	<div class="bk__failure" data-booking-failure hidden role="alert">
 		<CircleAlert size={22} aria-hidden="true" />
-		<p>Заявката не можа да бъде изпратена. Опитайте отново или се свържете директно по телефон или имейл.</p>
+		<p {...i18n('booking.failure')}>{t('booking.failure')}</p>
 	</div>
 
 	<BookingProgress />

@@ -1,9 +1,10 @@
 ---
 import LegalLayout from '../layouts/LegalLayout.astro';
 import CookiePolicy from '../components/legal/CookiePolicy.astro';
-import { legalDocs } from '../data/site';
+import CookiePolicyEn from '../components/legal/en/CookiePolicy.astro';
 ---
 
-<LegalLayout {...legalDocs.cookies}>
+<LegalLayout docKey="cookies">
 	<CookiePolicy />
+	<CookiePolicyEn slot="en" />
 </LegalLayout>

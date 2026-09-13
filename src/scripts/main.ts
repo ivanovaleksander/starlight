@@ -1,8 +1,11 @@
 /**
- * Клиентски скриптове: header, мобилно меню, reveal анимации,
+ * Клиентски скриптове: i18n, header, мобилно меню, reveal анимации,
  * активна секция в навигацията, предварителен избор на тема във формата.
  * (Резервирането на консултация има собствен скрипт: src/scripts/booking.ts)
  */
+import { initI18n, t } from './i18n';
+
+initI18n();
 
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -48,7 +51,8 @@ function initMobileMenu() {
 
 	const setOpen = (open: boolean) => {
 		toggle.setAttribute('aria-expanded', String(open));
-		toggle.setAttribute('aria-label', open ? 'Затвори менюто' : 'Отвори менюто');
+		toggle.setAttribute('aria-label', open ? t('nav.closeMenu') : t('nav.openMenu'));
+		toggle.dataset.i18nAttr = `aria-label:${open ? 'nav.closeMenu' : 'nav.openMenu'}`;
 		header.classList.toggle('is-open', open);
 		menu.classList.toggle('is-open', open);
 		document.body.classList.toggle('is-locked', open);
@@ -145,6 +149,14 @@ function initTopicPreselect() {
 	});
 }
 
+/* ---------- aria-label на услугите („X – изпратете запитване“) при смяна на езика ---------- */
+document.addEventListener('langchange', () => {
+	document.querySelectorAll<HTMLElement>('[data-i18n-aria-service]').forEach((el) => {
+		const key = el.dataset.i18nAriaService!;
+		el.setAttribute('aria-label', t('services.inquiryAria', { title: t(`services.items.${key}.title`) }));
+	});
+});
+
 initHeader();
 initMobileMenu();
 initReveal();
@@ -210,6 +222,10 @@ function initLegalDialog() {
 	dialog.addEventListener('close', () => {
 		document.body.classList.remove('is-locked');
 		lastOpener?.focus();
+	});
+	document.addEventListener('langchange', () => {
+		const active = tabs.find((t) => t.getAttribute('aria-pressed') === 'true');
+		if (active && title) title.textContent = active.textContent?.trim() ?? '';
 	});
 }
 

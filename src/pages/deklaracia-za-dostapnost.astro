@@ -1,9 +1,10 @@
 ---
 import LegalLayout from '../layouts/LegalLayout.astro';
 import AccessibilityStatement from '../components/legal/AccessibilityStatement.astro';
-import { legalDocs } from '../data/site';
+import AccessibilityStatementEn from '../components/legal/en/AccessibilityStatement.astro';
 ---
 
-<LegalLayout {...legalDocs.accessibility}>
+<LegalLayout docKey="accessibility">
 	<AccessibilityStatement />
+	<AccessibilityStatementEn slot="en" />
 </LegalLayout>

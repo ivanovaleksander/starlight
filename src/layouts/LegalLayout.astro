@@ -1,43 +1,45 @@
 ---
 /**
- * Layout за правните подстраници (политики, декларации).
+ * Layout за правните подстраници (политики, декларации) – двуезичен.
+ * Съдържанието на български идва в default slot-а, на английски – в slot="en".
  * Съдържанието е ЧЕРНОВА за преглед и одобрение от адвокат Хинков.
  */
 import BaseLayout from './BaseLayout.astro';
 import ArrowRight from '@lucide/astro/icons/arrow-right';
 import Logo from '../components/Logo.astro';
-import { site, legalLinks } from '../data/site';
+import { site, legalList, type LegalKey } from '../data/site';
+import { t, both, i18n, i18nHtml, i18nAttr } from '../i18n';
 
 interface Props {
-	title: string;
-	description: string;
-	/** Кратко описание на правната рамка, показва се под заглавието. */
-	basis?: string;
+	docKey: LegalKey;
 }
-const { title, description, basis } = Astro.props;
+const { docKey } = Astro.props;
 const current = Astro.url.pathname.replace(/\/$/, '');
+const title = both(`legal.docs.${docKey}.title`);
+const description = both(`legal.docs.${docKey}.description`);
 ---
 
-<BaseLayout title={`${title} | ${site.brand}`} description={description} noindex>
+<BaseLayout title={{ bg: `${title.bg} | ${site.brand}`, en: `${title.en} | ${site.brand}` }} description={description} noindex>
 	<article class="legal theme-light">
 		<div class="container legal__grid">
 			<aside class="legal__aside">
-				<a href="/" class="legal__home" aria-label={`${site.brand} – начало`}>
+				<a href="/" class="legal__home" {...i18nAttr({ 'aria-label': 'nav.brandHome' })}>
 					<Logo size={44} />
 				</a>
-				<a href="/" class="legal__back u-link">← Обратно към началото</a>
-				<nav aria-label="Правни документи" class="legal__nav">
-					<p class="legal__nav-title">Правни документи</p>
+				<a href="/" class="legal__back u-link" {...i18n('nav.backHome')}>{t('nav.backHome')}</a>
+				<nav {...i18nAttr({ 'aria-label': 'legal.navTitle' })} class="legal__nav">
+					<p class="legal__nav-title" {...i18n('legal.navTitle')}>{t('legal.navTitle')}</p>
 					<ul>
 						{
-							legalLinks.map((l) => (
+							legalList.map((l) => (
 								<li>
 									<a
 										href={l.href}
 										class:list={['legal__nav-link', current === l.href && 'is-current']}
 										aria-current={current === l.href ? 'page' : undefined}
+										{...i18n(`legal.docs.${l.key}.title`)}
 									>
-										{l.label}
+										{t(`legal.docs.${l.key}.title`)}
 									</a>
 								</li>
 							))
@@ -47,28 +49,26 @@ const current = Astro.url.pathname.replace(/\/$/, '');
 			</aside>
 
 			<div class="legal__main">
-				<p class="eyebrow">Правна информация</p>
-				<h1 class="legal__title">{title}</h1>
-				{basis && <p class="legal__basis">{basis}</p>}
+				<p class="eyebrow" {...i18n('legal.eyebrow')}>{t('legal.eyebrow')}</p>
+				<h1 class="legal__title" {...i18n(`legal.docs.${docKey}.title`)}>{title.bg}</h1>
+				<p class="legal__basis" {...i18n(`legal.docs.${docKey}.basis`)}>{t(`legal.docs.${docKey}.basis`)}</p>
 				<p class="legal__updated">
-					Последна актуализация: <span class="placeholder">[дата на публикуване]</span>
+					<span {...i18n('legal.updated')}>{t('legal.updated')}</span> <span class="placeholder" {...i18n('legal.updatedPlaceholder')}>{t('legal.updatedPlaceholder')}</span>
 				</p>
 
 				<div class="legal__notice" role="note">
-					<p>
-						<strong>Чернова за преглед.</strong> Документът е изготвен като пълна структурирана
-						чернова и трябва да бъде прегледан, допълнен и одобрен от адвокат Хинков преди
-						публикуване. Полетата в <span class="placeholder">[квадратни скоби]</span> се попълват с
-						реални данни. До одобрението страницата не се индексира от търсачки.
-					</p>
+					<p {...i18nHtml('legal.draftNotice')} set:html={t('legal.draftNotice')} />
 				</div>
 
-				<div class="legal__body prose">
+				<div class="legal__body prose" data-lang="bg" lang="bg">
 					<slot />
+				</div>
+				<div class="legal__body prose" data-lang="en" lang="en">
+					<slot name="en" />
 				</div>
 
 				<a href="/#kontakti" class="legal__cta">
-					Въпроси относно този документ <ArrowRight size={16} aria-hidden="true" />
+					<span {...i18n('legal.question')}>{t('legal.question')}</span> <ArrowRight size={16} aria-hidden="true" />
 				</a>
 			</div>
 		</div>

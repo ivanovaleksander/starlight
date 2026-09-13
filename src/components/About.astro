@@ -5,26 +5,10 @@
  */
 import LinkedInLink from './LinkedInLink.astro';
 import Portrait from './Portrait.astro';
-import { site, PLACEHOLDER } from '../data/site';
+import { t, i18n } from '../i18n';
 
-const facts = [
-	{
-		label: 'Биографична информация',
-		value:
-			'Адвокат Тодор Хинков е член на Адвокатска колегия – Пловдив и упражнява адвокатска професия от 2013 г. Практиката му съчетава процесуално представителство и правно обслужване на граждани и дружества с натрупан опит като вътрешен юридически съветник на корпоративни организации.',
-	},
-	{
-		label: 'Образование',
-		value:
-			'Завършва Английската езикова гимназия в Пловдив, а през 2012 г. придобива магистърска степен по право от Пловдивския университет „Паисий Хилендарски“. Професионалната му подготовка обхваща договорното, дружественото, търговското, гражданското и административното право.',
-	},
-	{
-		label: 'Професионален опит',
-		value:
-			'Притежава над 13 години адвокатски опит. Бил е юридически съветник на Bella Bulgaria в периода 2012–2020 г. и на SKF Group между 2020 и 2024 г. Консултира по корпоративни и търговски въпроси, учредяване и преобразуване на дружества, договори, сделки с недвижими имоти, трудово право и защита на личните данни. Представлява граждани и компании пред съдилища, нотариуси, съдебни изпълнители и други институции.',
-	},
-	{ label: 'Членство', value: `${site.barAssociation}, вписан от ${site.memberSince} г. Личен номер ${site.registryNumber}.` },
-];
+/** Ключове в локалите: about.<key>Label / about.<key> */
+const facts = ['bio', 'education', 'experience', 'membership'] as const;
 ---
 
 <section id="za-men" class="section theme-light about" aria-labelledby="about-title">
@@ -35,36 +19,33 @@ const facts = [
 				<Portrait variant="about" sizes="(min-width: 56rem) 22rem, 90vw" />
 			</div>
 			<div class="about__aside-meta">
-				<p class="about__name">{site.person}</p>
-				<p class="muted">{site.barAssociation}</p>
+				<p class="about__name" {...i18n('site.person')}>{t('site.person')}</p>
+				<p class="muted" {...i18n('site.barAssociation')}>{t('site.barAssociation')}</p>
 				<LinkedInLink variant="button" size={18} class="about__li" />
 			</div>
 		</div>
 
 		<div class="about__content">
-			<p class="eyebrow" data-reveal>За мен</p>
-			<h2 id="about-title" data-reveal style="--reveal-delay:1">За адвокат Хинков</h2>
-			<p class="lead about__lead" data-reveal style="--reveal-delay:2">
-				{site.subtitle} Работа с фокус върху яснота, предвидимост и последователни действия
-				във всеки етап от казуса.
-			</p>
+			<p class="eyebrow" data-reveal {...i18n('about.eyebrow')}>{t('about.eyebrow')}</p>
+			<h2 id="about-title" data-reveal style="--reveal-delay:1" {...i18n('about.title')}>{t('about.title')}</h2>
+			<p class="lead about__lead" data-reveal style="--reveal-delay:2" {...i18n('about.lead')}>{t('about.lead')}</p>
 
 			<dl class="about__facts" data-reveal style="--reveal-delay:3">
 				{
 					facts.map((f) => (
 						<div class="about__fact">
-							<dt>{f.label}</dt>
-							<dd>{f.value ?? <span class="placeholder">{PLACEHOLDER}</span>}</dd>
+							<dt {...i18n(`about.${f}Label`)}>{t(`about.${f}Label`)}</dt>
+							<dd {...i18n(`about.${f}`)}>{t(`about.${f}`)}</dd>
 						</div>
 					))
 				}
 				<div class="about__fact">
-					<dt>Подход към работата</dt>
+					<dt {...i18n('about.approachLabel')}>{t('about.approachLabel')}</dt>
 					<dd>
 						<ul class="about__approach">
-							<li>Предварителна оценка на казуса и честна информация за възможностите.</li>
-							<li>Ясна правна стратегия с конкретни стъпки и срокове.</li>
-							<li>Последователни действия и редовна комуникация с клиента.</li>
+							<li {...i18n('about.approach1')}>{t('about.approach1')}</li>
+							<li {...i18n('about.approach2')}>{t('about.approach2')}</li>
+							<li {...i18n('about.approach3')}>{t('about.approach3')}</li>
 						</ul>
 					</dd>
 				</div>

@@ -2,19 +2,19 @@
 /** Две визуално разграничени направления: За граждани (светло) и За бизнеса (тъмно). */
 import Check from '@lucide/astro/icons/check';
 import Button from './Button.astro';
-import { audiences } from '../data/site';
+import { t, i18n } from '../i18n';
 
 const cards = [
-	{ ...audiences.citizens, theme: 'card--light' },
-	{ ...audiences.business, theme: 'card--dark' },
+	{ id: 'za-grazhdani', key: 'citizens', theme: 'card--light' },
+	{ id: 'za-biznesa', key: 'business', theme: 'card--dark' },
 ];
 ---
 
 <section id="kogo-predstavlyavam" class="section theme-light audiences" aria-labelledby="audiences-title">
 	<div class="container">
 		<header class="audiences__head">
-			<p class="eyebrow" data-reveal>Кого представлявам</p>
-			<h2 id="audiences-title" data-reveal style="--reveal-delay:1">Правна подкрепа за граждани и бизнес.</h2>
+			<p class="eyebrow" data-reveal {...i18n('audiences.eyebrow')}>{t('audiences.eyebrow')}</p>
+			<h2 id="audiences-title" data-reveal style="--reveal-delay:1" {...i18n('audiences.title')}>{t('audiences.title')}</h2>
 		</header>
 
 		<div class="audiences__grid">
@@ -28,22 +28,22 @@ const cards = [
 						style={`--reveal-delay:${i + 1}`}
 					>
 						<div class="card__glow" aria-hidden="true" />
-						<p class="eyebrow">{c.eyebrow}</p>
-						<h3 id={`${c.id}-title`} class="card__title">
-							{c.title}
+						<p class="eyebrow" {...i18n(`audiences.${c.key}.eyebrow`)}>{t(`audiences.${c.key}.eyebrow`)}</p>
+						<h3 id={`${c.id}-title`} class="card__title" {...i18n(`audiences.${c.key}.title`)}>
+							{t(`audiences.${c.key}.title`)}
 						</h3>
-						<p class="card__text">{c.text}</p>
+						<p class="card__text" {...i18n(`audiences.${c.key}.text`)}>{t(`audiences.${c.key}.text`)}</p>
 						<ul class="card__points">
-							{c.points.map((p) => (
+							{['p1', 'p2', 'p3'].map((k) => (
 								<li>
 									<Check size={16} stroke-width={2.2} aria-hidden="true" />
-									<span>{p}</span>
+									<span {...i18n(`audiences.${c.key}.${k}`)}>{t(`audiences.${c.key}.${k}`)}</span>
 								</li>
 							))}
 						</ul>
 						<div class="card__cta">
-							<Button href="#kontakti" variant="link">
-								Запитване {c.eyebrow.toLowerCase()}
+							<Button href="#kontakti" variant="link" {...i18n(`audiences.${c.key}.cta`)}>
+								{t(`audiences.${c.key}.cta`)}
 							</Button>
 						</div>
 					</article>

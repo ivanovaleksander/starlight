@@ -1,6 +1,8 @@
 ---
 /**
- * Layout за отделна публикация (/publikacii/<slug>).
+ * Layout за отделна публикация (/publikacii/<slug>) – двуезичен.
+ * Приема метаданни и на двата езика; тялото на български е в default slot-а,
+ * на английски – в slot="en" (ако липсва, се показва българският оригинал с бележка).
  * Демо статиите носят обозначение и не се индексират.
  */
 import BaseLayout from './BaseLayout.astro';
@@ -9,62 +11,71 @@ import Logo from '../components/Logo.astro';
 import Clock from '@lucide/astro/icons/clock';
 import ArrowLeft from '@lucide/astro/icons/arrow-left';
 import { site } from '../data/site';
+import { t, i18n, l10n, type Localized } from '../i18n';
 
 interface Props {
-	title: string;
-	category: string;
-	summary: string;
+	title: Localized;
+	categoryKey: string;
+	summary: Localized;
 	date: Date;
 	readingTime: number;
 	demo: boolean;
+	hasEn: boolean;
 }
-const { title, category, summary, date, readingTime, demo } = Astro.props;
-const fmt = new Intl.DateTimeFormat('bg-BG', { day: 'numeric', month: 'long', year: 'numeric' });
+const { title, categoryKey, summary, date, readingTime, demo, hasEn } = Astro.props;
+const fmtBg = new Intl.DateTimeFormat('bg-BG', { day: 'numeric', month: 'long', year: 'numeric' });
+const fmtEn = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+const dateText = { bg: fmtBg.format(date), en: fmtEn.format(date) };
 ---
 
-<BaseLayout title={`${title} | ${site.brand}`} description={summary} noindex={demo}>
+<BaseLayout title={{ bg: `${title.bg} | ${site.brand}`, en: `${title.en} | ${site.brand}` }} description={summary} noindex={demo}>
 	<article class="article theme-light">
 		<div class="container article__inner">
 			<a href="/#publikacii" class="article__back u-link">
-				<ArrowLeft size={16} aria-hidden="true" /> Всички публикации
+				<ArrowLeft size={16} aria-hidden="true" /> <span {...i18n('article.back')}>{t('article.back')}</span>
 			</a>
 
 			<header class="article__head">
-				<p class="eyebrow">{category}</p>
-				<h1 class="article__title">{title}</h1>
-				<p class="article__summary">{summary}</p>
+				<p class="eyebrow" {...i18n(`publications.categories.${categoryKey}`)}>{t(`publications.categories.${categoryKey}`)}</p>
+				<h1 class="article__title" {...l10n(title)}>{title.bg}</h1>
+				<p class="article__summary" {...l10n(summary)}>{summary.bg}</p>
 				<p class="article__meta">
-					<time datetime={date.toISOString().slice(0, 10)}>{fmt.format(date)}</time>
+					<time datetime={date.toISOString().slice(0, 10)} {...l10n(dateText)}>{dateText.bg}</time>
 					<span class="article__dot" aria-hidden="true"></span>
-					<span class="article__time"><Clock size={14} aria-hidden="true" /> {readingTime} мин четене</span>
-					{demo && <span class="demo-badge">Демо съдържание</span>}
+					<span class="article__time"><Clock size={14} aria-hidden="true" /> <span {...i18n('publications.readingTime', { n: readingTime })}>{t('publications.readingTime', { n: readingTime })}</span></span>
+					{demo && <span class="demo-badge" {...i18n('publications.demoBadge')}>{t('publications.demoBadge')}</span>}
 				</p>
 			</header>
 
-			{
-				demo && (
-					<p class="article__notice" role="note">
-						Примерна статия, която показва оформлението на публикациите. Не представлява публикувано
-						становище на адвокат Хинков и подлежи на замяна с реален текст.
-					</p>
-				)
-			}
+			{demo && <p class="article__notice" role="note" {...i18n('publications.demoArticleNote')}>{t('publications.demoArticleNote')}</p>}
+			{!hasEn && <p class="article__notice" role="note" data-lang="en" lang="en">{t('article.noTranslation', undefined, 'en')}</p>}
 
-			<div class="article__body prose">
+			<div class="article__body prose" data-lang="bg" lang="bg">
 				<slot />
 			</div>
+			{
+				hasEn ? (
+					<div class="article__body prose" data-lang="en" lang="en">
+						<slot name="en" />
+					</div>
+				) : (
+					<div class="article__body prose" data-lang="en" lang="bg">
+						<slot />
+					</div>
+				)
+			}
 
 			<footer class="article__foot">
 				<div class="article__author">
 					<Logo size={40} class="article__mark" />
 					<div>
-						<p class="article__author-name">{site.person}</p>
-						<p class="muted">{site.barAssociation}</p>
+						<p class="article__author-name" {...i18n('site.person')}>{t('site.person')}</p>
+						<p class="muted" {...i18n('site.barAssociation')}>{t('site.barAssociation')}</p>
 					</div>
 				</div>
 				<div class="article__cta">
-					<p>Имате въпрос по темата?</p>
-					<Button href="/#kontakti" variant="primary" arrow>Запази консултация</Button>
+					<p {...i18n('article.question')}>{t('article.question')}</p>
+					<Button href="/#kontakti" variant="primary" arrow {...i18n('article.cta')}>{t('article.cta')}</Button>
 				</div>
 			</footer>
 		</div>
